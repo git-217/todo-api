@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-from config import get_asyncpg_db_url
+from backend.config import get_asyncpg_db_url
 
 
 DB_URL = get_asyncpg_db_url()
