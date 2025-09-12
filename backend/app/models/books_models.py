@@ -1,22 +1,22 @@
 from sqlalchemy import text, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from backend.app.tools.enums import CompleteStatus
-from backend.app.db.base import Base
+from backend.app.db.base import BaseSAModel
 
 
-class Book(Base):
-    title: Mapped[str] = mapped_column(String(64))
+class Book(BaseSAModel):
+    title: Mapped[str] = mapped_column(String(64), nullable=False)
     description: Mapped[str | None] = mapped_column(String(256), nullable=True)
     status: Mapped[CompleteStatus] = mapped_column(
         default=CompleteStatus.IN_PROGRESS, 
         server_default=text("'IN_PROGRESS'")
         )
-    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    author_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     
     user: Mapped["User"] = relationship(
         'User',
-        uselist=False,
-        back_populates='books'
+        back_populates='books',
+        uselist=False
     )
 
     notes: Mapped[list['Note']] = relationship(

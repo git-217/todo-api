@@ -1,6 +1,11 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
-class BooksSchema(BaseModel):
+class BookCreateSchema(BaseModel):
     id: int
 
-    
+class BookUpdateSchema(BaseModel):
+    pass
+
+class BookResponseSchema(BaseModel):
+    title: str
+    description: str | None

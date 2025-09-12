@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
-from backend.app.db.base import Base
+from backend.app.db.base import BaseSAModel
 from backend.app.db.session import DB_URL
 from backend.app.models.users_models import User
 from backend.app.models.books_models import Book
@@ -32,7 +32,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = Base.metadata
+target_metadata = BaseSAModel.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

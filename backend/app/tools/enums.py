@@ -1,12 +1,13 @@
 import enum
 
 class CompleteStatus(str, enum.Enum):
-    COMPLETED = 'COMPLETED'
-    IN_PROGRESS = 'IN_PROGRESS'
+    COMPLETED = 'completed'
+    IN_PROGRESS = 'in progress'
+    EMPTY = 'empty'
 
 
 
-class Role(str, enum.Enum):
-    BASE = 'base'
-    ADMIN = 'admin'
-    SUPER_ADMIN = 'super_admin'
+class UserRoles(str, enum.Enum):
+    BASE = 'basic_role'
+    ADMIN = 'admin_role'
+    SUPER_ADMIN = 'super_admin_role'

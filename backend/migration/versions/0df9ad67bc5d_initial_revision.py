@@ -1,8 +1,8 @@
-"""Initial revision
+"""initial revision
 
-Revision ID: 27f5213fa3a8
+Revision ID: 0df9ad67bc5d
 Revises: 
-Create Date: 2025-09-09 23:11:10.465242
+Create Date: 2025-09-10 00:34:58.785907
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '27f5213fa3a8'
+revision: str = '0df9ad67bc5d'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -26,6 +26,7 @@ def upgrade() -> None:
     sa.Column('last_name', sa.String(length=50), nullable=False),
     sa.Column('email', sa.String(), nullable=False),
     sa.Column('password_hash', sa.String(), nullable=False),
+    sa.Column('role', sa.Enum('BASE', 'ADMIN', 'SUPER_ADMIN', name='userroles', create_type=False), server_default=sa.text("'BASE'"), nullable=False),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', now())"), nullable=False),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', now())"), nullable=False),
@@ -35,7 +36,7 @@ def upgrade() -> None:
     op.create_table('books',
     sa.Column('title', sa.String(length=64), nullable=False),
     sa.Column('description', sa.String(length=256), nullable=True),
-    sa.Column('status', sa.Enum('COMPLETED', 'IN_PROGRESS', name='completestatus', create_type=False), server_default=sa.text("'IN_PROGRESS'"), nullable=False),
+    sa.Column('status', sa.Enum('COMPLETED', 'IN_PROGRESS', "EMPTY", name='completestatus', create_type=False), server_default=sa.text("'IN_PROGRESS'"), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', now())"), nullable=False),
@@ -46,7 +47,7 @@ def upgrade() -> None:
     op.create_table('notes',
     sa.Column('title', sa.String(length=128), nullable=False),
     sa.Column('content', sa.String(length=1024), nullable=True),
-    sa.Column('status', sa.Enum('COMPLETED', 'IN_PROGRESS', name='completestatus', create_type=False), server_default=sa.text("'IN_PROGRESS'"), nullable=False),
+    sa.Column('status', sa.Enum('COMPLETED', 'IN_PROGRESS', "EMPTY", name='completestatus', create_type=False), server_default=sa.text("'IN_PROGRESS'"), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('book_id', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
@@ -67,3 +68,4 @@ def downgrade() -> None:
     op.drop_table('users')
     # ### end Alembic commands ###
     op.execute('DROP TYPE IF EXISTS completestatus')
+    op.execute('DROP TYPE IF EXISTS userrole')
