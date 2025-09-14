@@ -14,8 +14,8 @@ router = APIRouter(prefix='/users')
 async def get_user_by_id(user_id: int, 
                   db: AsyncSession = Depends(get_async_session)
                   )-> UserResponseSchema | dict:
-    u_service = UserService(db)
-    user = await u_service.get_user_by_id(user_id=user_id)
+
+    user = await UserService(db).get_user_by_id(user_id=user_id)
     if user is None:
         return {'msg': 'user not found'}
     return user
@@ -23,17 +23,15 @@ async def get_user_by_id(user_id: int,
 
 @router.get('')
 async def get_all_users(db: AsyncSession = Depends(get_async_session)) -> list[UserResponseSchema]:
-    u_service = UserService(db)
-    result = await u_service.get_all_users()
+    result = await UserService(db).get_all_users()
     return result
 
 
 @router.post('/register')
 async def register_new_user(new_user: UserRegisterSchema,
                             db: AsyncSession = Depends(get_async_session)):
-    u_service = UserService(db)
-
-    result = u_service.registrate_user(user_mail=new_user.email)
+    
+    result = UserService(db).registrate_user(user_mail=new_user.email)
     if result:
         return {'msg': 'Registration success'}
     else:
@@ -46,11 +44,12 @@ async def register_new_user(new_user: UserRegisterSchema,
 @router.delete('{user_id}/delete')
 async def delete_user_by_id(user_id: int,
                             db: AsyncSession = Depends(get_async_session)):
-    u_service = UserService(db)
-    result = u_service.delete_user_by_id(user_id=user_id)
-    if result is False:
+
+    result = UserService(db).delete_user_by_id(user_id=user_id)
+    if result:
+        return {'msg': 'User successfully deleted'}
+    else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail='User not found'
         )
-    return {'msg': 'User successfully deleted'}
