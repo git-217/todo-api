@@ -1,13 +1,16 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-from backend.app.models.books_models import Book
-from backend.app.repositories.base_repo import CRUDBase
+from backend.app.db.models.books_models import Book
+from backend.app.db.repositories.base_repo import CRUDBase
 from backend.app.schemas.books_schema import BookCreateSchema, BookUpdateSchema
 
 
 
 class BookCRUDRepo(CRUDBase[Book, BookCreateSchema, BookUpdateSchema]):
+    def __init__(self, model):
+        self.model = Book
+
     async def get_by_title(self, db: AsyncSession, title: str) -> Book | None:
         query = select(Book).where(Book.title == title)
         result = await db.execute(query)

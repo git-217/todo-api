@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-from backend.config import get_asyncpg_db_url
+from backend.app.core.config import get_asyncpg_db_url
 from sqlalchemy.exc import SQLAlchemyError
 
 DB_URL = get_asyncpg_db_url()

@@ -20,8 +20,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     async def get(self, *, db: AsyncSession, id: int) -> ModelType | None:
         return await db.get(self.model, id)
     
-    async def get_list(self, db: AsyncSession,) -> list[ModelType] | None:
-        result = await db.execute(select(self.model))
+    async def get_list(self, db: AsyncSession) -> list[ModelType] | None:
+        query = select(self.model)
+        result = await db.execute(query)
         return result.scalars().all()
     
     async def create(self,
@@ -29,29 +30,29 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
                      db: AsyncSession,
                      obj_data: CreateSchemaType | ModelType,
                     ) -> ModelType:
-        try:
-            new_obj = self.model(**obj_data)
-            db.add(new_obj)
-            print(obj_data)
-            await db.flush()
-            return new_obj
-        except Exception as e:
-            raise e
         
-    async def update(self, *, db: AsyncSession, filter_by, **values: dict) -> int:
+        new_obj = self.model(**obj_data)
+        db.add(new_obj)
+        await db.flush()
+        return new_obj
+        
+        
+    async def update(self, *, db: AsyncSession, 
+                     id: int, 
+                     new_data_obj: UpdateSchemaType) -> ModelType:
         new_obj = (
             sqlalchemy_update(self.model)
-            .where(*[getattr(self.model, k) == v for k,v in filter_by.items()])
-            .values(**values)
+            .where(self.model.id == id)
+            .values(new_data_obj.model_dump())
             .execution_options(synchronize_session='fetch')
         )
         result = await db.execute(new_obj)
         return result.rowcount
     
-    async def delete(self, *, db: AsyncSession, **filter_by) -> int:
-        new_obj = (
+    async def delete(self, *, db: AsyncSession, **filter_by) -> bool:
+        query = (
             sqlalchemy_delete(self.model)
             .filter_by(**filter_by)
         )
-        result = await db.execute(new_obj)
-        return result.rowcount        
+        result = await db.execute(query)
+        return True if result else False

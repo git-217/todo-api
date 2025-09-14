@@ -20,12 +20,9 @@ class UserRegisterSchema(BaseModel):
             raise ValueError('Password must contain atleast 1 special character')
         return value
         
-class UserGetSchema(BaseModel):
-    id: int
-
+class UserResponseSchema(BaseModel):
     first_name: str 
     last_name: str | None
     email: str
-    password_hash: str
 
     model_config = ConfigDict(from_attributes=True)
