@@ -33,7 +33,7 @@ async def register_new_user(new_user: UserRegisterSchema,
                             db: AsyncSession = Depends(get_async_session)):
     u_service = UserService(db)
 
-    result = UserService.registrate_user(user_mail=new_user.email)
+    result = u_service.registrate_user(user_mail=new_user.email)
     if result:
         return {'msg': 'Registration success'}
     else:
