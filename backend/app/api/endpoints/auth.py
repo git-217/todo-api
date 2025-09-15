@@ -27,4 +27,13 @@ async def login(response: Response,
                 auth_data: UserAuthSchema,
                 db: AsyncSession = Depends(get_async_session)
                 ):
-    user = UserService(db).login_user(data=auth_data)
+    access_token = UserService(db).login_user(data=auth_data)
+    if access_token:
+        response.set_cookie(key='user_access_token', value=access_token, httponly=True)
+        #refresh token realization will be somwhere in the future ig
+        return {'access_token': access_token, 'refresh_token': None }
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='Wrong Email or password'
+        )

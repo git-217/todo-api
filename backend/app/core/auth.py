@@ -1,10 +1,12 @@
 from passlib.context import CryptContext
-
 from pydantic import EmailStr
 from jose import jwt
 from datetime import datetime, timedelta, timezone
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from backend.app.core.config import get_auth_data
 from backend.app.db.repositories.user_repo import user_crud_repo
+
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
@@ -24,8 +26,8 @@ def create_access_token(data: dict) -> str:
     encode_jwt = jwt.encode(to_encode, auth_data['secret_key'], algorithm=auth_data['algorithm'])
     return encode_jwt
 
-async def authenticate_user(email: EmailStr, password: str):
-    user = await user_crud_repo.get_one_or_none(email=email)
+async def authenticate_user(db: AsyncSession, email: EmailStr, password: str):
+    user = await user_crud_repo.get_one_or_none(db=AsyncSession, email=email)
     if not user or verify_password(plain_password=password, hashed_password=user.password_hash) is False:
         return None
     return user
