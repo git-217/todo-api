@@ -47,17 +47,16 @@ class UserS:
 
     async def registrate_user(self, user_data: UserRegisterSchema):
         
-        user = await self.user_repo.get_one_or_none(db=self.db, **user_data.email)
+        user = await self.user_repo.get_one_or_none(db=self.db, email = user_data.email)
         if user:
             return None
-
         user_data.password_hash = get_password_hash(user_data.password_hash)
         await self.user_repo.create(db=self.db, obj_data=user_data.model_dump())
         return True 
 
 
     async def login_user(self, user_data: UserAuthSchema) -> str | None:
-        user = await authenticate_user(db=self.db, values=user_data.model_dump())
+        user = await authenticate_user(db=self.db, email=user_data.email, password=user_data.password)
         if user is None:
             return None
         access_token = create_access_token({'sub': str(user.id)})

@@ -12,8 +12,9 @@ router = APIRouter(prefix='/auth', tags=['Auth'])
 async def register(new_user: UserRegisterSchema,
                             db: AsyncSession = Depends(get_async_session)):
     
-    result = UserService(db).registrate_user(user_mail=new_user.email)
+    result = await UserService(db).registrate_user(user_data=new_user)
     if result:
+        print(result)
         return {'msg': 'Registration success'}
     else:
         raise HTTPException(
@@ -27,7 +28,7 @@ async def login(response: Response,
                 auth_data: UserAuthSchema,
                 db: AsyncSession = Depends(get_async_session)
                 ):
-    access_token = UserService(db).login_user(data=auth_data)
+    access_token = await UserService(db).login_user(user_data=auth_data)
     if access_token:
         response.set_cookie(key='user_access_token', value=access_token, httponly=True)
         #refresh token realization will be somwhere in the future ig
