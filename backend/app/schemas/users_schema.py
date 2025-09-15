@@ -21,8 +21,12 @@ class UserRegisterSchema(BaseModel):
         return value
         
 class UserResponseSchema(BaseModel):
-    first_name: str 
-    last_name: str | None
-    email: str
+    first_name: str = Field(..., description="User's name")
+    last_name: str | None = Field(None, description="User's last name")
+    email: EmailStr = Field(..., description="User's email")
 
     model_config = ConfigDict(from_attributes=True)
+
+class UserAuthSchema(BaseModel):
+    email: EmailStr = Field(..., description='Email')
+    password: str = Field(..., description='Password')

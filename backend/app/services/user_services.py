@@ -3,10 +3,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.core.auth import get_password_hash
 from backend.app.db.repositories.user_repo import user_crud_repo
-from backend.app.schemas.users_schema import UserRegisterSchema, UserUpdateSchema, UserResponseSchema
+from backend.app.schemas.users_schema import (UserRegisterSchema, 
+                                              UserUpdateSchema, 
+                                              UserResponseSchema,
+                                              UserAuthSchema)
 from backend.app.db.models.users_models import User
 
-class User:
+
+class UserS:
     def __init__(self, db: AsyncSession):
         self.user_repo = user_crud_repo
         self.db = db
@@ -24,8 +28,6 @@ class User:
                                                             filter_by={"id": user_id},
                                                             values=new_data.model_dump())
         return changed_rowcounts
-    
-
 
 
     async def registrate_user(self, user_data: UserRegisterSchema):
@@ -35,7 +37,7 @@ class User:
             return None
 
         user_data.password_hash = get_password_hash(user_data.password_hash)
-        await self.create_user(user_data)
+        await self.user_repo.create(db=self.db, obj_data=user_data.model_dump())
         return True 
     
 
@@ -54,4 +56,9 @@ class User:
             return None
         return UserResponseSchema.model_validate(user)
     
-UserService = User
+    async def login_user(self, user_data: UserAuthSchema) -> bool:
+        user = await self.user_repo.get_by_any(db=self.db, values=user_data)
+        ...
+
+
+UserService = UserS

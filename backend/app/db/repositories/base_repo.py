@@ -17,6 +17,10 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def __init__(self, model: type[ModelType]):
         self.model = model
 
+    async def get_by_any(self, *, db:AsyncSession, **values) -> ModelType | None:
+        query = select(self.model).filter_by(**values)
+        return await db.execute(query)
+
     async def get(self, *, db: AsyncSession, id: int) -> ModelType | None:
         return await db.get(self.model, id)
     
