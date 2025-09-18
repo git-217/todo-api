@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.app.core.auth_base import verify_password, get_password_hash
 from backend.app.services.user_services import UserService
 from backend.app.schemas.users_schema import UserResponseSchema, UpdateUserNamesSchema
 from backend.app.db.session import get_async_session
-from backend.app.api.dependencies import get_current_user
+from backend.app.db.models.users_models import User
+
+from backend.app.api.dependencies import get_current_user, get_current_admin_user
 
 
 router = APIRouter(prefix='/users', tags=['User api'])
@@ -29,22 +30,22 @@ async def get_all_users(db: AsyncSession = Depends(get_async_session)) -> list[U
     return result
 
 
-@router.patch('/users/{user_id}')
+@router.patch('/users/me', summary="change user's First/Last name")
 async def change_user_names(new_data: UpdateUserNamesSchema,
                             user = Depends(get_current_user),
                             db: AsyncSession = Depends(get_async_session)
                             ) -> dict:
-    user_id = user.id
-    patched = await UserService(db).update(uid=user_id, user_data=new_data)
+    patched = await UserService(db).update(uid=user.id, user_data=new_data)
     if patched:
-        return {'msg': f'succesfully updated {patched} params'}
+        return {'msg': 'succesfully updated'}
     else:
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, detail="can't change data"
+            status_code=status.HTTP_409_CONFLICT, detail="Request cannot be processed"
         )
 
-@router.delete('{user_id}/delete')
+@router.delete('/{user_id}/delete')
 async def delete_user_by_id(user_id: int,
+                            is_admin: User = Depends(get_current_admin_user),
                             db: AsyncSession = Depends(get_async_session)):
 
     result = UserService(db).delete_user_by_id(user_id=user_id)

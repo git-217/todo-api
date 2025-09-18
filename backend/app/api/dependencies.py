@@ -5,6 +5,8 @@ from datetime import datetime, timezone
 from backend.app.db.session import get_async_session
 from backend.app.core.config import get_auth_data
 from backend.app.services.user_services import UserService
+from backend.app.db.models.users_models import User
+from backend.app.tools.enums import UserRoles
 
 class CurrentUser:
     def __init__(self, user, db):
@@ -43,3 +45,8 @@ async def get_current_user(token: str = Depends(get_token), db: AsyncSession = D
     user = await UserService(db).get_user_or_none(id = int(user_id))
 
     return user
+
+async def get_current_admin_user(current_user: User = Depends(get_current_user)):
+    if current_user.role is UserRoles.ADMIN:
+        return current_user
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,  detail='Access denied')
