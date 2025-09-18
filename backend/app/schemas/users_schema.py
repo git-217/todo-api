@@ -30,3 +30,7 @@ class UserResponseSchema(BaseModel):
 class UserAuthSchema(BaseModel):
     email: EmailStr = Field(..., description='Email')
     password: str = Field(..., description='Password')
+
+class UpdateUserNamesSchema(BaseModel):
+    first_name: str = Field(..., description="User's name")
+    last_name: str | None = Field(None, description="User's last name")

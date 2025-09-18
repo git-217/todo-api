@@ -28,7 +28,7 @@ async def login(response: Response,
                 auth_data: UserAuthSchema,
                 db: AsyncSession = Depends(get_async_session)
                 ):
-    access_token = await UserService(db).login_user(user_data=auth_data)
+    access_token = await UserService(db).create_access_token(user_data=auth_data)
     if access_token:
         response.set_cookie(key='user_access_token', value=access_token, httponly=True)
         #refresh token realization will be somwhere in the future ig

@@ -1,14 +1,14 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.app.core.auth import get_password_hash
+from backend.app.core.auth_base import get_password_hash
 from backend.app.db.repositories.user_repo import user_crud_repo
 from backend.app.schemas.users_schema import (UserRegisterSchema, 
                                               UserUpdateSchema, 
                                               UserResponseSchema,
                                               UserAuthSchema)
 from backend.app.db.models.users_models import User
-from backend.app.core.auth import authenticate_user, create_access_token
+from backend.app.core.auth_base import authenticate_user, create_access_token
 
 
 class UserS:
@@ -44,6 +44,11 @@ class UserS:
             return None
         return UserResponseSchema.model_validate(user)
     
+    async def update(self, *, uid: int, user_data: UserUpdateSchema):
+        upd = await self.user_repo.update(db=self.db, id=uid, new_data_obj=user_data)
+        if not upd:
+            return None
+        return upd
 
     async def registrate_user(self, user_data: UserRegisterSchema):
         
@@ -55,8 +60,10 @@ class UserS:
         return True 
 
 
-    async def login_user(self, user_data: UserAuthSchema) -> str | None:
+    async def create_access_token(self, user_data: UserAuthSchema) -> str | None:
+        print('func create started')
         user = await authenticate_user(db=self.db, email=user_data.email, password=user_data.password)
+        print('user is OK')
         if user is None:
             return None
         access_token = create_access_token({'sub': str(user.id)})
