@@ -14,9 +14,9 @@ from alembic import context
 
 from backend.app.db.base import BaseSAModel
 from backend.app.db.session import DB_URL
-from backend.app.models.users_models import User
-from backend.app.models.books_models import Book
-from backend.app.models.notes_models import Note
+from backend.app.db.models.users_models import User
+from backend.app.db.models.books_models import Book
+from backend.app.db.models.notes_models import Note
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
