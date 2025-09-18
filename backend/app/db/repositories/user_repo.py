@@ -8,7 +8,6 @@ from backend.app.db.repositories.base_repo import CRUDBase
 
 class UserCRUDRepository(CRUDBase[User, UserCreateSchema, UserUpdateSchema]):
     async def get_one_or_none(self, *, db: AsyncSession, **search_keys):
-        print(f'search_keys: {search_keys}')
         query = select(self.model).filter_by(**search_keys)
         result = await db.execute(query)
         return result.scalar_one_or_none()

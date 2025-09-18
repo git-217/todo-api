@@ -47,7 +47,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         new_obj = (
             sqlalchemy_update(self.model)
             .where(self.model.id == id)
-            .values(new_data_obj.model_dump())
+            .values(new_data_obj.model_dump(exclude_unset=True))
             .execution_options(synchronize_session='fetch')
         )
         result = await db.execute(new_obj)

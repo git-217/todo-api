@@ -40,7 +40,6 @@ async def get_current_user(token: str = Depends(get_token), db: AsyncSession = D
     if not user_id:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='User not found')
     
-    print('AFTER get SUB')
     user = await UserService(db).get_user_or_none(id = int(user_id))
 
     return user

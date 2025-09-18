@@ -45,7 +45,9 @@ class UserS:
         return UserResponseSchema.model_validate(user)
     
     async def update(self, *, uid: int, user_data: UserUpdateSchema):
-        upd = await self.user_repo.update(db=self.db, id=uid, new_data_obj=user_data)
+        upd = await self.user_repo.update(db=self.db, 
+                                          id=uid, 
+                                          new_data_obj=user_data)
         if not upd:
             return None
         return upd
