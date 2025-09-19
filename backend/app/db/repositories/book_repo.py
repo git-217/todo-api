@@ -12,11 +12,16 @@ from backend.app.schemas.books_schema import BookCreateSchema, BookUpdateSchema
 
 
 class BookCRUDRepo(CRUDBase[Book, BookCreateSchema, BookUpdateSchema]):
-    async def get_by_title(self, db: AsyncSession, title: str) -> Book | None:
+    async def get_by_title(self, db: AsyncSession, title: str) -> Book:
         query = select(Book).where(Book.title == title)
         result = await db.execute(query)
         return result.scalar_one_or_none()
     
+    async def get_by_id(self, db: AsyncSession, owner_id: int, book_id: int) -> Book:
+        query = select(Book).where(Book.author_id == owner_id, Book.id == book_id)
+        result = await db.execute(query)
+        return result.scalar_one_or_none()
+
     async def change_book_status(self, db: AsyncSession, book_id: int):
         result = await db.execute(
             select(func.count(Note.id))

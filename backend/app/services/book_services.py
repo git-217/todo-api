@@ -16,18 +16,20 @@ class BookS:
         self.user_repo = user_crud_repo
         self.db = db
     
+    
     async def create(self, *, owner: User, book_data: BookCreateSchema) -> BookResponseSchema:
         data = book_data.model_dump()
         data.update(user=owner)
         new_book = await self.book_repo.create(db=self.db, obj_data=data)
         return BookResponseSchema.model_validate(new_book)
     
+
     async def get_book_by_id(self, *, user_id: int, book_id: int) -> BookResponseSchema | None:
-        result = await book_crud_repo.get_by_id(db=self.db, id = book_id)
-        if (result is None) or (not result.user.id == user_id):
-            return None
-        
+        result = await book_crud_repo.get_by_id(db=self.db, owner_id=user_id, book_id=book_id)
+        if result is None:
+            return None      
         return BookResponseSchema.model_validate(result)
+
 
     async def update_book_data(self, *, owner: User, book_data: BookUpdateSchema) -> int:
         result = await self.book_repo.update(db=self.db, 
