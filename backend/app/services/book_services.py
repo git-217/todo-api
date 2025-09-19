@@ -25,7 +25,7 @@ class BookS:
     
 
     async def get_book_by_id(self, *, user_id: int, book_id: int) -> BookResponseSchema | None:
-        result = await book_crud_repo.get_by_id(db=self.db, owner_id=user_id, book_id=book_id)
+        result = await self.book_repo.get_by_id(db=self.db, owner_id=user_id, book_id=book_id)
         if result is None:
             return None      
         return BookResponseSchema.model_validate(result)
