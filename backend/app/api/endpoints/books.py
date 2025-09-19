@@ -33,4 +33,6 @@ async def change_book_data(new_book_data: BookUpdateSchema,
                            db: AsyncSession = Depends(get_async_session)
                            ) -> dict:
     result = await BookService(db=db).update_book_data(owner=user, book_data=new_book_data)
-    return {'msg': f'succesfully updated {result} columns'}
+    if result:
+        return {'msg': 'success'}
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='access denied')
