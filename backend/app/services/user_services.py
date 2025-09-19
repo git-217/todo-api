@@ -39,7 +39,7 @@ class UserS:
         return users
 
     async def get_user_by_id(self, user_id: int) -> UserResponseSchema | None:
-        user = await self.user_repo.get(db=self.db, id=user_id)
+        user = await self.user_repo.get_by_id(db=self.db, id=user_id)
         if user is None:
             return None
         return UserResponseSchema.model_validate(user)

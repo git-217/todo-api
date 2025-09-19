@@ -21,7 +21,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         query = select(self.model).filter_by(**values)
         return await db.execute(query)
 
-    async def get(self, *, db: AsyncSession, id: int) -> ModelType | None:
+    async def get_by_id(self, *, db: AsyncSession, id: int) -> ModelType | None:
         return await db.get(self.model, id)
     
     async def get_list(self, db: AsyncSession) -> list[ModelType] | None:

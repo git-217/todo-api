@@ -45,7 +45,7 @@ async def change_user_names(new_data: UpdateUserNamesSchema,
 
 @router.delete('/{user_id}/delete')
 async def delete_user_by_id(user_id: int,
-                            is_admin: User = Depends(get_current_admin_user),
+                            is_admin = Depends(get_current_admin_user),
                             db: AsyncSession = Depends(get_async_session)):
 
     result = UserService(db).delete_user_by_id(user_id=user_id)

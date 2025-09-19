@@ -8,9 +8,6 @@ from backend.app.schemas.books_schema import BookCreateSchema, BookUpdateSchema
 
 
 class BookCRUDRepo(CRUDBase[Book, BookCreateSchema, BookUpdateSchema]):
-    def __init__(self, model):
-        self.model = Book
-
     async def get_by_title(self, db: AsyncSession, title: str) -> Book | None:
         query = select(Book).where(Book.title == title)
         result = await db.execute(query)
