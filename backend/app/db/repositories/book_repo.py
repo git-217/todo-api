@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from backend.app.db.models.books_models import Book
+from backend.app.db.models.users_models import User
 from backend.app.db.repositories.base_repo import CRUDBase
 from backend.app.schemas.books_schema import BookCreateSchema, BookUpdateSchema
 
@@ -12,7 +13,5 @@ class BookCRUDRepo(CRUDBase[Book, BookCreateSchema, BookUpdateSchema]):
         query = select(Book).where(Book.title == title)
         result = await db.execute(query)
         return result.scalar_one_or_none()
-    
-    
     
 book_crud_repo = BookCRUDRepo(Book)
