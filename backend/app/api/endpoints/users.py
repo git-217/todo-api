@@ -37,7 +37,7 @@ async def change_user_names(new_data: UpdateUserNamesSchema,
                             ) -> dict:
     patched = await UserService(db).update(uid=user.id, user_data=new_data)
     if patched:
-        return {'msg': 'succesfully updated'}
+        return {'msg': 'User succesfully updated'}
     else:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail="Request cannot be processed"
