@@ -35,4 +35,4 @@ async def change_book_data(new_book_data: BookUpdateSchema,
     result = await BookService(db=db).update_book_data(owner=user, book_data=new_book_data)
     if result:
         return {'msg': 'success'}
-    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='access denied')
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="book didn't found")
