@@ -1,6 +1,5 @@
 from passlib.context import CryptContext
 from passlib.exc import UnknownHashError
-from pydantic import EmailStr
 from jose import jwt
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -29,7 +28,6 @@ def create_access_token(data: dict) -> str:
 
 async def authenticate_user(db: AsyncSession, email: str, password: str):
     user = await user_crud_repo.get_one_or_none(db=db, email=email)
-    print('user=', user)
     try:
         pass_status = verify_password(plain_password=password, hashed_password=user.password_hash)
         if not user or pass_status is False:

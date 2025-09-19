@@ -38,3 +38,8 @@ async def login(response: Response,
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='Wrong Email or password'
         )
+    
+@router.post('/logout')
+async def logout(response: Response):
+    response.delete_cookie(key='user_access_token')
+    return {'msg': 'logout'}

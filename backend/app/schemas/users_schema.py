@@ -21,6 +21,7 @@ class UserRegisterSchema(BaseModel):
         return value
         
 class UserResponseSchema(BaseModel):
+    id: int
     first_name: str = Field(..., description="User's name")
     last_name: str | None = Field(None, description="User's last name")
     email: EmailStr = Field(..., description="User's email")

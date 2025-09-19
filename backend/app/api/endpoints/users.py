@@ -29,8 +29,11 @@ async def get_all_users(db: AsyncSession = Depends(get_async_session)) -> list[U
     result = await UserService(db).get_all_users()
     return result
 
+@router.get('/me')
+async def get_current_user(user = Depends(get_current_user)) -> UserResponseSchema:
+    return user
 
-@router.patch('/users/me', summary="change user's First/Last name")
+@router.patch('/me', summary="change user's First/Last name")
 async def change_user_names(new_data: UpdateUserNamesSchema,
                             user = Depends(get_current_user),
                             db: AsyncSession = Depends(get_async_session)

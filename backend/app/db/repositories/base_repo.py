@@ -43,7 +43,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         
     async def update(self, *, db: AsyncSession, 
                      id: int, 
-                     new_data_obj: UpdateSchemaType) -> ModelType:
+                     new_data_obj: UpdateSchemaType) -> int:
         new_obj = (
             sqlalchemy_update(self.model)
             .where(self.model.id == id)
@@ -53,10 +53,10 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         result = await db.execute(new_obj)
         return result.rowcount
     
-    async def delete(self, *, db: AsyncSession, **filter_by) -> bool:
+    async def delete(self, *, db: AsyncSession, **filter_by) -> int:
         query = (
             sqlalchemy_delete(self.model)
             .filter_by(**filter_by)
         )
         result = await db.execute(query)
-        return True if result else False
+        return result.rowcount
