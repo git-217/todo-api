@@ -6,7 +6,7 @@ from backend.app.db.repositories.book_repo import book_crud_repo
 from backend.app.db.repositories.user_repo import user_crud_repo
 from backend.app.db.models.users_models import User
 from backend.app.db.models.books_models import Book
-from backend.app.core.exceptions import (NotFoundException, 
+from backend.app.tools.exceptions import (NotFoundException, 
                                          ConflictException, 
                                          ForbiddenException)
 
@@ -37,15 +37,26 @@ class BookService:
         return BookReadSchema.model_validate(book)
 
 
-    async def update_book_data(self, *, owner: User, book_data: BookUpdateSchema) -> BookReadSchema:
+    async def update_book_data(self, *, owner_id: int, book_data: BookUpdateSchema) -> BookReadSchema:
         book = await self.book_repo.get_by_id(db=self.db, id=book_data.id)
         if not book:
             raise NotFoundException('Book not found')
-        if book.author_id != owner.id:
+        if book.author_id != owner_id:
             return ForbiddenException("Not your book")
         result = await self.book_repo.update(db=self.db, 
                                          id=book_data.id, 
                                          new_data_obj=book_data) 
         if result is None:
             raise ConflictException("Failed to update book")
-        return await self.book_repo.get_by_id(db=self.db, id=book_data.id)
+        return book
+    
+    async def delete_book(self, *, owner_id: int, book_id: int) -> BookReadSchema:
+        book = await self.book_repo.get_by_id(db=self.db, id=book_id)
+        if not book:
+            raise NotFoundException('Book not found')
+        if book.author_id != owner_id:
+            return ForbiddenException("Not your book")
+        result = await self.book_repo.delete(db=self.db, id=BookUpdateSchema.id)
+        if result is None:
+            raise ConflictException("Failed to delete book")
+        return book

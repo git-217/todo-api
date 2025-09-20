@@ -26,7 +26,6 @@ async def get_book_by_id(book_id: int,
     book = await BookService(db).get_book_by_id(user_id=user.id, book_id=book_id)
     return create_response(data=book)
 
-
 @router.post('/new')
 async def create_new_book(book_data: BookCreateSchema,
                           user = Depends(get_current_user),
@@ -39,5 +38,14 @@ async def change_book_data(new_book_data: BookUpdateSchema,
                            user = Depends(get_current_user),
                            db: AsyncSession = Depends(get_async_session)
                            ) -> PatchResponseBase[BookUpdateSchema]:
-    updated_book = await BookService(db=db).update_book_data(owner=user, book_data=new_book_data)
+    updated_book = await BookService(db=db).update_book_data(owner_id=user.id, book_data=new_book_data)
     return create_response(data=updated_book)
+
+
+@router.delete('/{book_id}')
+async def delete_book(book_id: int,
+                      user = Depends(get_current_user),
+                      db: AsyncSession = Depends(get_async_session)
+                      ) -> DeleteResponseBase[BookReadSchema]:
+    deleted_book = await BookService(db).delete_book(owner_id=user.id, book_id=book_id)
+    return create_response(data=deleted_book)

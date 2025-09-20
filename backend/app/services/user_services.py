@@ -8,7 +8,7 @@ from backend.app.schemas.users_schema import (UserRegisterSchema,
                                               UserAuthSchema)
 from backend.app.db.models.users_models import User
 from backend.app.core.crypt import authenticate_user, create_access_token
-from backend.app.core.exceptions import (NotFoundException, 
+from backend.app.tools.exceptions import (NotFoundException, 
                                          ConflictException, 
                                          ForbiddenException)
 

@@ -20,7 +20,6 @@ class BookUpdateSchema(BaseModel):
                                     max_length=256, 
                                     description='Description of the book. Max 256 chars')
 
-
 class BookReadSchema(BaseModel):
     id: int
     title: str
