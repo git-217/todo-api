@@ -8,7 +8,7 @@ from backend.app.tools.enums import UserRoles
 
 class User(BaseSAModel):
     first_name: Mapped[str] = mapped_column(String(50), nullable=False)
-    last_name: Mapped[str | None] = mapped_column(String(50), nullable=False)
+    last_name: Mapped[str | None] = mapped_column(String(50))
     email: Mapped[str_unique]
     password_hash: Mapped[str]
 
