@@ -8,10 +8,6 @@ from backend.app.services.user_services import UserService
 from backend.app.db.models.users_models import User
 from backend.app.tools.enums import UserRoles
 
-class CurrentUser:
-    def __init__(self, user, db):
-        self.user = user
-        self.db = db
 
 def get_token(request: Request):
     token = request.cookies.get('user_access_token')

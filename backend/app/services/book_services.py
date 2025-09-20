@@ -29,17 +29,19 @@ class BookService:
     
 
     async def get_book_by_id(self, *, user_id: int, book_id: int) -> BookReadSchema | None:
-        result = await self.book_repo.get_by_id(db=self.db, owner_id=user_id, book_id=book_id)
-        if result is None:
-            raise NotFoundException("Book not found")   
-        return BookReadSchema.model_validate(result)
+        book = await self.book_repo.get_by_id(db=self.db, id=book_id)
+        if not book:
+            raise NotFoundException('Book not found')
+        if book.author_id != user_id:
+            return ForbiddenException("Not your book")  
+        return BookReadSchema.model_validate(book)
 
 
-    async def update_book_data(self, *, owner: User, book_data: BookUpdateSchema) -> int:
+    async def update_book_data(self, *, owner: User, book_data: BookUpdateSchema) -> BookReadSchema:
         book = await self.book_repo.get_by_id(db=self.db, id=book_data.id)
         if not book:
             raise NotFoundException('Book not found')
-        if book.user_id != owner.id:
+        if book.author_id != owner.id:
             return ForbiddenException("Not your book")
         result = await self.book_repo.update(db=self.db, 
                                          id=book_data.id, 

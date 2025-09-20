@@ -22,25 +22,22 @@ router = APIRouter(prefix='/books', tags=['Book api'])
 async def get_book_by_id(book_id: int,
                                user = Depends(get_current_user),
                                db: AsyncSession = Depends(get_async_session)
-                               ) -> PostResponseBase[BookReadSchema]:
+                               ) -> GetResponseBase[BookReadSchema]:
     book = await BookService(db).get_book_by_id(user_id=user.id, book_id=book_id)
-    if book:
-        return book
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="book didn't found")
+    return create_response(data=book)
+
 
 @router.post('/new')
 async def create_new_book(book_data: BookCreateSchema,
                           user = Depends(get_current_user),
                           db: AsyncSession = Depends(get_async_session)) -> PostResponseBase[BookReadSchema]:
-    result = await BookService(db).create(owner=user, book_data=book_data)
-    return result
+    new_book = await BookService(db).create(owner=user, book_data=book_data)
+    return create_response(data=new_book)
 
 @router.patch('/update')
 async def change_book_data(new_book_data: BookUpdateSchema,
                            user = Depends(get_current_user),
                            db: AsyncSession = Depends(get_async_session)
                            ) -> PatchResponseBase[BookUpdateSchema]:
-    result = await BookService(db=db).update_book_data(owner=user, book_data=new_book_data)
-    if result:
-        return {'msg': 'success'}
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="book didn't found")
+    updated_book = await BookService(db=db).update_book_data(owner=user, book_data=new_book_data)
+    return create_response(data=updated_book)
