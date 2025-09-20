@@ -17,6 +17,12 @@ class BookCRUDRepo(CRUDBase[Book, BookCreateSchema, BookUpdateSchema]):
         result = await db.execute(query)
         return result.scalar_one_or_none()
 
+
+    async def get_list(self, db: AsyncSession, owner_id: int) -> list[Book]:
+        query = select(Book).where(Book.author_id == owner_id)
+        result = await db.execute(query)
+        return result.scalars()
+
     async def change_book_status(self, db: AsyncSession, book_id: int):
         result = await db.execute(
             select(func.count(Note.id))

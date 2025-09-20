@@ -9,7 +9,7 @@ from backend.app.db.models.books_models import Book
 from backend.app.tools.exceptions import (NotFoundException, 
                                          ConflictException, 
                                          ForbiddenException)
-
+from backend.app.tools.enums import CompleteStatus, UserRoles
 
 
 
@@ -27,21 +27,26 @@ class BookService:
             raise ConflictException("Failed to create book")
         return BookReadSchema.model_validate(new_book)
     
+    async def get_all_books(self, owner_id: int) -> list[BookReadSchema]:
+        books = await self.book_repo.get_list(db=self.db, owner_id=owner_id)
+        if books is None:
+            raise NotFoundException(detail='Zero books found')
+        return books
 
-    async def get_book_by_id(self, *, user_id: int, book_id: int) -> BookReadSchema | None:
+    async def get_book_by_id(self, *, owner_id: int, book_id: int) -> BookReadSchema | None:
         book = await self.book_repo.get_by_id(db=self.db, id=book_id)
         if not book:
             raise NotFoundException('Book not found')
-        if book.author_id != user_id:
+        if book.author_id != owner_id:
             return ForbiddenException("Not your book")  
         return BookReadSchema.model_validate(book)
 
 
-    async def update_book_data(self, *, owner_id: int, book_data: BookUpdateSchema) -> BookReadSchema:
+    async def update_book_data(self, *, owner: User, book_data: BookUpdateSchema) -> BookReadSchema:
         book = await self.book_repo.get_by_id(db=self.db, id=book_data.id)
         if not book:
             raise NotFoundException('Book not found')
-        if book.author_id != owner_id:
+        if (book.author_id != owner.id) or (owner.role != UserRoles.ADMIN):
             return ForbiddenException("Not your book")
         result = await self.book_repo.update(db=self.db, 
                                          id=book_data.id, 
@@ -50,11 +55,12 @@ class BookService:
             raise ConflictException("Failed to update book")
         return book
     
-    async def delete_book(self, *, owner_id: int, book_id: int) -> BookReadSchema:
+
+    async def delete_book(self, *, owner: User, book_id: int) -> BookReadSchema:
         book = await self.book_repo.get_by_id(db=self.db, id=book_id)
         if not book:
             raise NotFoundException('Book not found')
-        if book.author_id != owner_id:
+        if (book.author_id != owner.id) or (owner.role != UserRoles.ADMIN):
             return ForbiddenException("Not your book")
         result = await self.book_repo.delete(db=self.db, id=BookUpdateSchema.id)
         if result is None:

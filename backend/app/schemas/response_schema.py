@@ -9,6 +9,9 @@ class ResponseBase(BaseModel, Generic[T]):
     meta: dict | Any | None = {}
     data: T | None = None
 
+class GetListResponseBase(ResponseBase[DataType], Generic[DataType]):
+    message: str | None = 'Data got correctly'
+    data: list[DataType]
 
 class GetResponseBase(ResponseBase[DataType], Generic[DataType]):
     message: str | None = 'Data got correctly'
@@ -34,6 +37,7 @@ def create_response(data: DataType,
                         | PostResponseBase[DataType]
                         | PutResponseBase[DataType]
                         | DeleteResponseBase[DataType]
+                        | GetListResponseBase[DataType]
                     ):
     if message is None:
         return {'data': data, 'meta': meta}
