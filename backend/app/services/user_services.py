@@ -11,7 +11,7 @@ from backend.app.db.models.users_models import User
 from backend.app.core.auth_base import authenticate_user, create_access_token
 
 
-class UserS:
+class UserService:
     def __init__(self, db: AsyncSession):
         self.user_repo = user_crud_repo
         self.db = db
@@ -71,6 +71,3 @@ class UserS:
         access_token = create_access_token({'sub': str(user.id)})
         return access_token
         
-
-
-UserService = UserS

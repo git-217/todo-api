@@ -10,7 +10,7 @@ from backend.app.db.models.books_models import Book
 
 
 
-class BookS:
+class BookService:
     def __init__(self, db: AsyncSession):
         self.book_repo = book_crud_repo
         self.user_repo = user_crud_repo
@@ -39,7 +39,3 @@ class BookS:
         if result is None:
             return None
         return result
-
-        
-
-BookService = BookS
