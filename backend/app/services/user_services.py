@@ -1,14 +1,14 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.app.core.auth_base import get_password_hash
+from backend.app.core.crypt import get_password_hash
 from backend.app.db.repositories.user_repo import user_crud_repo
 from backend.app.schemas.users_schema import (UserRegisterSchema, 
                                               UserUpdateSchema, 
                                               UserResponseSchema,
                                               UserAuthSchema)
 from backend.app.db.models.users_models import User
-from backend.app.core.auth_base import authenticate_user, create_access_token
+from backend.app.core.crypt import authenticate_user, create_access_token
 
 
 class UserService:
