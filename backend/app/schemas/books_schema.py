@@ -21,9 +21,10 @@ class BookUpdateSchema(BaseModel):
                                     description='Description of the book. Max 256 chars')
 
 
-class BookResponseSchema(BaseModel):
+class BookReadSchema(BaseModel):
     id: int
     title: str
     description: str | None
+    status: CompleteStatus
 
     model_config = {'from_attributes': True}

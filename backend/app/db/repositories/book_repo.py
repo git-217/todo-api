@@ -16,11 +16,6 @@ class BookCRUDRepo(CRUDBase[Book, BookCreateSchema, BookUpdateSchema]):
         query = select(Book).where(Book.title == title)
         result = await db.execute(query)
         return result.scalar_one_or_none()
-    
-    async def get_by_id(self, db: AsyncSession, owner_id: int, book_id: int) -> Book:
-        query = select(Book).where(Book.author_id == owner_id, Book.id == book_id)
-        result = await db.execute(query)
-        return result.scalar_one_or_none()
 
     async def change_book_status(self, db: AsyncSession, book_id: int):
         result = await db.execute(
@@ -33,18 +28,5 @@ class BookCRUDRepo(CRUDBase[Book, BookCreateSchema, BookUpdateSchema]):
             sqlalchemy_update(Book)
             .where(Book.id == book_id).values(Book.status == new_status)
         )
-
-    async def update(self, *, db: AsyncSession, 
-                     owner_id: int,
-                     book_id: int, 
-                     new_book_data: BookUpdateSchema) -> int:
-        new_obj = (
-            sqlalchemy_update(Book)
-            .where(Book.author_id == owner_id, Book.id == book_id)
-            .values(new_book_data.model_dump(exclude_unset=True))
-            .execution_options(synchronize_session='fetch')
-        )
-        result = await db.execute(new_obj)
-        return result.rowcount
 
 book_crud_repo = BookCRUDRepo(Book)

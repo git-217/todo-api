@@ -1,4 +1,3 @@
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.core.crypt import get_password_hash
@@ -9,6 +8,9 @@ from backend.app.schemas.users_schema import (UserRegisterSchema,
                                               UserAuthSchema)
 from backend.app.db.models.users_models import User
 from backend.app.core.crypt import authenticate_user, create_access_token
+from backend.app.core.exceptions import (NotFoundException, 
+                                         ConflictException, 
+                                         ForbiddenException)
 
 
 class UserService:
@@ -41,7 +43,7 @@ class UserService:
     async def get_user_by_id(self, user_id: int) -> UserResponseSchema | None:
         user = await self.user_repo.get_by_id(db=self.db, id=user_id)
         if user is None:
-            return None
+            raise NotFoundException(detail='User not found')
         return UserResponseSchema.model_validate(user)
     
     async def update(self, *, uid: int, user_data: UserUpdateSchema):
@@ -56,18 +58,16 @@ class UserService:
         
         user = await self.user_repo.get_one_or_none(db=self.db, email = user_data.email)
         if user:
-            return None
+            raise NotFoundException(detail='user not found')
         user_data.password_hash = get_password_hash(user_data.password_hash)
         await self.user_repo.create(db=self.db, obj_data=user_data.model_dump())
         return True 
 
 
     async def create_access_token(self, user_data: UserAuthSchema) -> str | None:
-        print('func create started')
         user = await authenticate_user(db=self.db, email=user_data.email, password=user_data.password)
-        print('user is OK')
         if user is None:
-            return None
+            return NotFoundException('')
         access_token = create_access_token({'sub': str(user.id)})
         return access_token
         
