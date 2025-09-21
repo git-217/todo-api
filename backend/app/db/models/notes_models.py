@@ -12,7 +12,7 @@ class Note(BaseSAModel):
                                     default=CompleteStatus.IN_PROGRESS, 
                                     server_default=text("'IN_PROGRESS'"))
     
-    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    author_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     book_id: Mapped[int] = mapped_column(ForeignKey('books.id'))
 
     # 1:N book:notes

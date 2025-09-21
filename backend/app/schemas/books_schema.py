@@ -25,5 +25,6 @@ class BookReadSchema(BaseModel):
     title: str
     description: str | None
     status: CompleteStatus
+    author_id: int
 
     model_config = {'from_attributes': True}

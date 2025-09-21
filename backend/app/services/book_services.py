@@ -33,12 +33,12 @@ class BookService:
             raise NotFoundException(detail='Zero books found')
         return books
 
-    async def get_book_by_id(self, *, owner_id: int, book_id: int) -> BookReadSchema | None:
+    async def get_book_by_id(self, *, owner_id: int, book_id: int) -> BookReadSchema:
         book = await self.book_repo.get_by_id(db=self.db, id=book_id)
         if not book:
             raise NotFoundException('Book not found')
         if book.author_id != owner_id:
-            return ForbiddenException("Not your book")  
+            raise ForbiddenException("Not your book")  
         return BookReadSchema.model_validate(book)
 
 
