@@ -43,20 +43,21 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         
     async def update(self, *, db: AsyncSession, 
                      id: int, 
-                     new_data_obj: UpdateSchemaType) -> int:
+                     new_data_obj: UpdateSchemaType) -> ModelType:
         new_obj = (
             sqlalchemy_update(self.model)
             .where(self.model.id == id)
             .values(new_data_obj.model_dump(exclude_unset=True))
-            .execution_options(synchronize_session='fetch')
+            .returning(self.model)
         )
         result = await db.execute(new_obj)
-        return result.rowcount
+        return result.scalar_one_or_none()
     
-    async def delete(self, *, db: AsyncSession, **filter_by) -> int:
+    async def delete(self, *, db: AsyncSession, **filter_by) -> ModelType:
         query = (
             sqlalchemy_delete(self.model)
             .filter_by(**filter_by)
+            .returning(self.model.id)
         )
         result = await db.execute(query)
-        return result.rowcount
+        return result

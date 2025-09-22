@@ -59,7 +59,7 @@ class BookService:
     async def delete_book(self, *, owner: User, book_id: int) -> BookReadSchema:
         book = await self.book_repo.get_by_id(db=self.db, id=book_id)
         if not book:
-            raise NotFoundException('Book not found')
+            raise NotFoundException("Book doesn't exist")
         if (book.author_id != owner.id) or (owner.role != UserRoles.ADMIN):
             return ForbiddenException("Not your book")
         result = await self.book_repo.delete(db=self.db, id=BookUpdateSchema.id)

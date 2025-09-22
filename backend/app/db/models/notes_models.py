@@ -9,8 +9,8 @@ class Note(BaseSAModel):
     title: Mapped[str] = mapped_column(String(128))
     content: Mapped[str | None] = mapped_column(String(1024), nullable=True)
     status: Mapped[CompleteStatus] = mapped_column(
-                                    default=CompleteStatus.IN_PROGRESS, 
-                                    server_default=text("'IN_PROGRESS'"))
+                                    default=CompleteStatus.EMPTY, 
+                                    server_default=text("'empty'"))
     
     author_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     book_id: Mapped[int] = mapped_column(ForeignKey('books.id'))

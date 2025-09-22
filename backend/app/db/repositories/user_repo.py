@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from backend.app.schemas.users_schema import UserCreateSchema, UserUpdateSchema
 from backend.app.db.models.users_models import User
@@ -12,5 +13,22 @@ class UserCRUDRepo(CRUDBase[User, UserCreateSchema, UserUpdateSchema]):
         query = select(self.model).filter_by(**search_keys)
         result = await db.execute(query)
         return result.scalar_one_or_none()
+    
+    async def get_by_id_or_none(self, *, db: AsyncSession, id: int,
+                        include_books: bool = False,
+                        include_notes: bool = False) -> User | None:
+        
+        query = (select(self.model)
+                 .where(self.model.id == id)
+                 )
+        if include_books:
+            query = query.options(selectinload(self.model.books))
+            print('with books')
+        if include_notes:
+            query = query.options(selectinload(self.model.notes))
+            print('with notes')
+        result = await db.execute(query)
+        return result.scalar_one_or_none()
+
 
 user_crud_repo = UserCRUDRepo(User)

@@ -37,10 +37,9 @@ async def get_current_user(token: str = Depends(get_token), db: AsyncSession = D
     user_id = payload.get('sub')
     if not user_id:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='User not found')
-    
-    user = await UserService(db).get_user_or_none(id = int(user_id))
 
-    return user
+    return await UserService(db).get_user_by_id_full(int(user_id))
+
 
 async def get_current_admin_user(current_user: User = Depends(get_current_user)):
     if current_user.role is UserRoles.ADMIN:
