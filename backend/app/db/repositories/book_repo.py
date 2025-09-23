@@ -1,4 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 from sqlalchemy import select, func
 from sqlalchemy import update as sqlalchemy_update
 
@@ -23,16 +24,25 @@ class BookCRUDRepo(CRUDBase[Book, BookCreateSchema, BookUpdateSchema]):
         result = await db.execute(query)
         return result.scalars()
 
-    async def change_book_status(self, db: AsyncSession, book_id: int):
+
+    async def autochange_book_stat(self, db:AsyncSession, book_id: int):
         result = await db.execute(
-            select(func.count(Note.id))
-            .where(Note.book_id == book_id, Note.status != CompleteStatus.COMPLETED)
+            select(Book)
+            .options(selectinload(Book.notes))
+            .where(Book.id == book_id)
         )
-        unfinished_notes = result.scalar_one()
-        new_status = CompleteStatus.COMPLETED if unfinished_notes == 0 else CompleteStatus.IN_PROGRESS
-        await db.execute(
-            sqlalchemy_update(Book)
-            .where(Book.id == book_id).values(Book.status == new_status)
-        )
+        book: Book = result.scalar_one_or_none()
+
+        total_notes = len(book.notes)
+        unfinished_notes = sum(1 for note in book.notes if note.status != CompleteStatus.COMPLETED)
+
+        if total_notes == 0:
+            book.status = CompleteStatus.EMPTY
+        elif unfinished_notes == 0:
+            book.status = CompleteStatus.COMPLETED
+        else:
+            book.status = CompleteStatus.IN_PROGRESS
+
+        await db.refresh(book)
 
 book_crud_repo = BookCRUDRepo(Book)
