@@ -30,7 +30,7 @@ async def create_new_note(book_id: int,
                           note_data: NoteCreateSchema,
                           db: AsyncSession = Depends (get_async_session),
                           user: User = Depends(get_current_user),
-                          ):
+                          ) -> PostResponseBase[NoteReadSchema]:
     new_note = await NoteService(db).create_note(owner=user, 
                                            book_id=book_id,
                                            note_data=note_data)
