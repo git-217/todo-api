@@ -42,7 +42,7 @@ async def get_book_notes(book_id: int,
                          note_id: int,
                          db: AsyncSession = Depends(get_async_session),
                          user: User = Depends(get_current_user)
-                         ):
+                         ) -> GetResponseBase[NoteReadSchema]:
     note = await NoteService(db).get_one(owner=user, 
                                          book_id=book_id, 
                                          note_id=note_id)
