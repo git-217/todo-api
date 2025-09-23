@@ -37,12 +37,14 @@ class BookCRUDRepo(CRUDBase[Book, BookCreateSchema, BookUpdateSchema]):
         unfinished_notes = sum(1 for note in book.notes if note.status != CompleteStatus.COMPLETED)
 
         if total_notes == 0:
-            book.status = CompleteStatus.EMPTY
-        elif unfinished_notes == 0:
-            book.status = CompleteStatus.COMPLETED
-        else:
-            book.status = CompleteStatus.IN_PROGRESS
+            new_status = CompleteStatus.EMPTY
 
-        await db.refresh(book)
+        elif unfinished_notes == 0:
+            new_status = CompleteStatus.COMPLETED
+            
+        else:
+            new_status = CompleteStatus.IN_PROGRESS
+
+        book.status = new_status
 
 book_crud_repo = BookCRUDRepo(Book)

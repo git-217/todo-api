@@ -36,6 +36,6 @@ class NoteService:
         note.update(author_id=owner.id, book_id=current_book.id)
         note = await self.note_repo.create(db=self.db, obj_data=note)
 
-        l = await self.book_repo.autochange_book_stat(db=self.db, book_id=book_id)
+        await self.book_repo.autochange_book_stat(db=self.db, book_id=book_id)
 
         return NoteReadSchema.model_validate(note)
