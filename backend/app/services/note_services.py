@@ -19,6 +19,16 @@ class NoteService:
         self.book_repo = book_crud_repo
         self.user_repo = user_crud_repo
         self.db = db
+    
+    async def _validate_permissions(self, 
+                                    owner_id: int,
+                                    book_id: int):
+        book = await self.book_repo.get_by_id(db=self.db, id=book_id)
+        if not book:
+            raise NotFoundException("Current book doesn't exist")
+        if book.author_id != owner_id:
+            raise ForbiddenException("Not your book")
+        return book
 
     async def create_note(self, 
                           *, 
@@ -26,12 +36,7 @@ class NoteService:
                           book_id: int, 
                           note_data: NoteCreateSchema
                           ) -> NoteReadSchema:
-        current_book = await self.book_repo.get_by_id(db=self.db, id=book_id)
-        if not current_book:
-            raise NotFoundException("Current book doesn't exist")
-        if current_book.author_id != owner.id:
-            raise ForbiddenException("Not your book")
-
+        current_book = await self._validate_permissions(owner_id=owner.id, book_id=book_id)
 
         note = note_data.model_dump()
         note.update(author_id=owner.id, book_id=current_book.id)
