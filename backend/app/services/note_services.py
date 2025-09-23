@@ -45,3 +45,17 @@ class NoteService:
         await self.book_repo.autochange_book_stat(db=self.db, book_id=book_id)
 
         return NoteReadSchema.model_validate(note)
+    
+    async def get_one(self,
+                      *,
+                      owner: User,
+                      book_id: int,
+                      note_id: int
+                      ) -> NoteReadSchema:
+        
+        await self._validate_permissions(owner_id=owner.id, book_id=book_id)
+        
+        note = await self.note_repo.get_by_id(db=self.db, id=note_id)
+        if note is None:
+            raise NotFoundException("Note doesn't exist")
+        return NoteReadSchema.model_validate(note)

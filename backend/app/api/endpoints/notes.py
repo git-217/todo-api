@@ -35,3 +35,15 @@ async def create_new_note(book_id: int,
                                                  book_id=book_id,
                                                  note_data=note_data)
     return create_response(data=new_note)
+
+
+@router.get('/{book_id}/note/{note_id}')
+async def get_book_notes(book_id: int,
+                         note_id: int,
+                         db: AsyncSession = Depends(get_async_session),
+                         user: User = Depends(get_current_user)
+                         ):
+    note = await NoteService(db).get_one(owner=user, 
+                                         book_id=book_id, 
+                                         note_id=note_id)
+    return create_response(data=note)
