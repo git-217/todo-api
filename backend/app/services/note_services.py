@@ -1,4 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from backend.app.tools.enums import CompleteStatus
 from backend.app.db.repositories.book_repo import book_crud_repo
 from backend.app.db.repositories.user_repo import user_crud_repo
 from backend.app.db.repositories.note_repo import note_crud_repo
