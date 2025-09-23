@@ -30,7 +30,7 @@ class NoteService:
             raise NotFoundException("Current book doesn't exist")
         if current_book.author_id != owner.id:
             raise ForbiddenException("Not your book")
-               
+
 
         note = note_data.model_dump()
         note.update(user=owner, book=current_book)
@@ -38,4 +38,7 @@ class NoteService:
         note = await self.note_repo.create(db=self.db, obj_data=note)
         if note is None:
             raise ConflictException("Failed to create note")
+        
+        await self.book_repo.autochange_book_stat(db=self.db, book_id=book_id)
+
         return NoteReadSchema.model_validate(note)
