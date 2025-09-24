@@ -94,10 +94,12 @@ class UserService:
                                                       id=user_id,
                                                       include_books=True,
                                                       include_notes=True)
-        if user is None:
-            raise NotFoundException("User doesn't exist")
-        deleted_user = await self.user_repo.delete(db=self.db, id=user_id)
 
+        deleted_user = await self.user_repo.delete(db=self.db, id=user_id)
+        
+        if deleted_user is None:
+            raise NotFoundException("User doesn't exist")
+        
         return UserBasicSchema.model_validate(deleted_user)
 
     async def update(self, *, uid: int, 
