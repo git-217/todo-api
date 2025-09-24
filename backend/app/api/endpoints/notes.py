@@ -10,7 +10,8 @@ from backend.app.api.dependencies import get_current_user
 from backend.app.services.note_services import NoteService
 from backend.app.schemas.response_schema import *
 from backend.app.schemas.notes_schema import (NoteCreateSchema,
-                                              NoteReadSchema)
+                                              NoteReadSchema,
+                                              NoteUpdateSchema)
 from backend.app.schemas.response_schema import (create_response,
                                                  GetResponseBase,
                                                  PostResponseBase,
@@ -46,4 +47,17 @@ async def get_book_notes(book_id: int,
     note = await NoteService(db).get_one(owner=user, 
                                          book_id=book_id, 
                                          note_id=note_id)
+    return create_response(data=note)
+
+@router.put('/book_id/note/{note_id}')
+async def change_note_data(book_id: int,
+                           note_id: int,
+                           note_data: NoteUpdateSchema,
+                           db: AsyncSession = Depends(get_async_session),
+                           user: User = Depends(get_current_user)
+                           ) -> PutResponseBase[NoteReadSchema]:
+    note = await NoteService(db).update(owner=user, 
+                                        book_id=book_id,
+                                        note_id=note_id,
+                                        note_data=note_data)
     return create_response(data=note)

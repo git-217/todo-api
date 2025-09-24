@@ -7,7 +7,9 @@ class NoteCreateSchema(BaseModel):
                          detail='task content. max length = 1024')
 
 class NoteUpdateSchema(BaseModel):
-    pass
+    title: str
+    content: str
+    status: CompleteStatus
 
 class NoteReadSchema(BaseModel):
     id: int

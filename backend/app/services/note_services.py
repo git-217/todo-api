@@ -59,3 +59,21 @@ class NoteService:
         if note is None:
             raise NotFoundException("Note doesn't exist")
         return NoteReadSchema.model_validate(note)
+    
+    async def update(self, *,
+                     owner: User,
+                     book_id: int,
+                     note_id: int,
+                     note_data: NoteUpdateSchema
+                     ) -> NoteReadSchema:
+        await self._validate_permissions(owner_id=owner.id, book_id=book_id)
+
+        updated_note = await self.note_repo.update(
+                                                   db=self.db,
+                                                   id=note_id,
+                                                   new_data_obj=note_data
+                                                  )
+        if not updated_note:
+            raise NotFoundException('Note not found')
+        
+        return NoteReadSchema.model_validate(updated_note)

@@ -23,10 +23,8 @@ class UserCRUDRepo(CRUDBase[User, UserCreateSchema, UserUpdateSchema]):
                  )
         if include_books:
             query = query.options(selectinload(self.model.books))
-            print('with books')
         if include_notes:
             query = query.options(selectinload(self.model.notes))
-            print('with notes')
         result = await db.execute(query)
         return result.scalar_one_or_none()
 

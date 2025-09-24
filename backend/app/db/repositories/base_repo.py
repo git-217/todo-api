@@ -43,7 +43,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         
     async def update(self, *, db: AsyncSession, 
                      id: int, 
-                     new_data_obj: UpdateSchemaType) -> ModelType:
+                     new_data_obj: UpdateSchemaType) -> ModelType | None:
         new_obj = (
             sqlalchemy_update(self.model)
             .where(self.model.id == id)
