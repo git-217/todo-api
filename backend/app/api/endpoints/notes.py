@@ -39,7 +39,7 @@ async def create_new_note(book_id: int,
 
 
 @router.get('/{book_id}/note/{note_id}')
-async def get_book_notes(book_id: int,
+async def get_book_note(book_id: int,
                          note_id: int,
                          db: AsyncSession = Depends(get_async_session),
                          user: User = Depends(get_current_user)
