@@ -60,6 +60,19 @@ class NoteService:
             raise NotFoundException("Note doesn't exist")
         return NoteReadSchema.model_validate(note)
     
+    async def get_all(self,
+                      *,
+                      owner: User,
+                      book_id: int,
+                      ) -> list[NoteReadSchema]:
+        
+        await self._validate_permissions(owner_id=owner.id, book_id=book_id)
+
+        notes = await self.note_repo.get_list(db=self.db)
+        if notes is None:
+            raise NotFoundException('Current book is empty')
+        return [NoteReadSchema.model_validate(note) for note in notes]
+
     async def update(self, *,
                      owner: User,
                      book_id: int,

@@ -49,6 +49,14 @@ async def get_book_note(book_id: int,
                                          note_id=note_id)
     return create_response(data=note)
 
+@router.get('/{book_id}/notes')
+async def get_all_book_notes(book_id: int,
+                             db: AsyncSession = Depends(get_async_session),
+                             user: User = Depends(get_current_user)
+                             ) -> GetListResponseBase[NoteReadSchema]:
+    notes = await NoteService(db).get_all(owner=user, book_id=book_id)
+    return create_response(data=notes)
+
 @router.put('/book_id/note/{note_id}')
 async def change_note_data(book_id: int,
                            note_id: int,
