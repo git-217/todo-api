@@ -57,7 +57,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         query = (
             sqlalchemy_delete(self.model)
             .filter_by(**filter_by)
-            .returning(self.model.id)
+            .returning(self.model)
         )
         result = await db.execute(query)
         return result
