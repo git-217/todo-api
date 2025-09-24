@@ -90,3 +90,16 @@ class NoteService:
             raise NotFoundException('Note not found')
         
         return NoteReadSchema.model_validate(updated_note)
+    
+    async def delete(self, *,
+                     owner: User,
+                     book_id: int,
+                     note_id: int
+                     ) -> NoteReadSchema:
+        await self._validate_permissions(owner_id=owner.id, book_id=book_id)
+
+        deleted_note = await self.note_repo.delete(db=self.db, id=note_id)
+        if deleted_note is None:
+            raise NotFoundException("Note not found")
+        
+        return NoteReadSchema.model_validate(deleted_note)

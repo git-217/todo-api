@@ -69,3 +69,14 @@ async def change_note_data(book_id: int,
                                         note_id=note_id,
                                         note_data=note_data)
     return create_response(data=note)
+
+@router.delete('/{book_id}/note/{note_id}')
+async def delete_note(book_id: int,
+                      note_id: int,
+                      db: AsyncSession = Depends(get_async_session),
+                      user: User = Depends(get_current_user)
+                      ) -> DeleteResponseBase[NoteReadSchema]:
+    deleted_note = NoteService(db).delete(owner=user,
+                                          book_id=book_id,
+                                          note_id=note_id)
+    return create_response(deleted_note)
