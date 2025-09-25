@@ -32,9 +32,13 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     async def create(self,
                      *,
                      db: AsyncSession,
-                     obj_data: CreateSchemaType | ModelType,
+                     obj_data: CreateSchemaType,
+                     **additional_params
                     ) -> ModelType:
         
+        if additional_params:
+            obj_data.update(**additional_params)
+
         new_obj = self.model(**obj_data)
         db.add(new_obj)
         await db.flush()
