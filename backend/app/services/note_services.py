@@ -3,7 +3,7 @@ from backend.app.tools.enums import UserRoles
 from backend.app.db.repositories.book_repo import book_crud_repo
 from backend.app.db.repositories.note_repo import note_crud_repo
 from backend.app.db.models.users_models import User
-from backend.app.db.models.books_models import Book
+from backend.app.db.models.notes_models import Note
 from backend.app.schemas.notes_schema import (NoteCreateSchema, 
                                               NoteUpdateSchema,
                                               NoteReadSchema)
@@ -21,17 +21,28 @@ class NoteService:
     async def _validate_permissions(self, 
                                     owner: User,
                                     book_id: int,
-                                    note_id: int = None) -> list[int]:
+                                    note_id: int = None) -> list[Note]:
+        """
+        Validates user's allowings to current book.
+
+        Returns list of notes, if note_id wasn't passed into func.
+
+        Returns list of only one note, if note_id was passed.
+        """
+
         book = await self.book_repo.get_book_with_notes(db=self.db, book_id=book_id)
         if not book:
             raise NotFoundException("Book not found")
         if (book.author_id != owner.id) and (owner.role not in (UserRoles.ADMIN,
                                                                UserRoles.SUPER_ADMIN)):
             raise ForbiddenException("Access denied")
-        if note_id and (note_id not in book.notes):
-            raise NotFoundException("Book is empty")
-        return True
-    #XXX
+        
+        notes = [n for n in book.notes]
+        if note_id:
+            note_ids = [n.id for n in book.notes]
+            if note_id not in note_ids:
+                raise NotFoundException("Book is empty")
+        return notes
 
     async def create_note(self, 
                           *, 
@@ -57,14 +68,12 @@ class NoteService:
                       note_id: int
                       ) -> NoteReadSchema:
         
-        await self._validate_permissions(owner=owner, 
-                                         book_id=book_id,
-                                         note_id=note_id)
-        
-        note = await self.note_repo.get_by_id(db=self.db, id=note_id)
-        if note is None:
+        notes = await self._validate_permissions(owner=owner, 
+                                                        book_id=book_id,
+                                                        note_id=note_id)
+        if notes is None:
             raise NotFoundException("Note doesn't exist")
-        return NoteReadSchema.model_validate(note)
+        return NoteReadSchema.model_validate(*notes)
     
     async def get_all(self,
                       *,
