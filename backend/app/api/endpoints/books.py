@@ -24,14 +24,14 @@ async def get_book_by_id(book_id: int,
                                user = Depends(get_current_user),
                                db: AsyncSession = Depends(get_async_session)
                                ) -> GetResponseBase[BookReadSchema]:
-    book = await BookService(db).get_book_by_id(owner_id=user.id, book_id=book_id)
+    book = await BookService(db).get_book_by_id(owner=user, book_id=book_id)
     return create_response(data=book)
 
 
 @router.get('/', summary="Get all user's books")
 async def get_users_books(user = Depends(get_current_user),
                           db: AsyncSession = Depends(get_async_session)) -> GetListResponseBase[BookReadSchema]:
-    books = await BookService(db).get_all_books(owner_id=user.id)
+    books = await BookService(db).get_all_books(owner=user)
     books_schemas = [BookReadSchema.model_validate(b) for b in books]
     return create_response(data = books_schemas)
 
