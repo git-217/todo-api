@@ -20,7 +20,7 @@ class UserService:
         self.db = db
 
     async def create_user(self, user_data: UserRegisterSchema) -> UserBasicSchema:
-        user = await self.user_repo.create(db=self.db, obj_data = user_data.model_dump())
+        user = await self.user_repo.create(db=self.db, obj_data = user_data)
         return UserBasicSchema.model_validate(user)
 
     
@@ -115,7 +115,7 @@ class UserService:
         if user:
             raise NotFoundException("User already exists")
         user_data.password_hash = get_password_hash(user_data.password_hash)
-        new_user = await self.user_repo.create(db=self.db, obj_data=user_data.model_dump())
+        new_user = await self.user_repo.create(db=self.db, obj_data=user_data)
         return UserBasicSchema.model_validate(new_user) 
 
 

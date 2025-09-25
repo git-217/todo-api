@@ -35,7 +35,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
                      obj_data: CreateSchemaType,
                      **additional_params
                     ) -> ModelType:
-        
+        obj_data = obj_data.model_dump()
+
         if additional_params:
             obj_data.update(**additional_params)
 

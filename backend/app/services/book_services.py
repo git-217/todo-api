@@ -31,8 +31,7 @@ class BookService:
         return book
     
     async def create(self, *, owner: User, book_data: BookCreateSchema) -> BookReadSchema:
-        data = book_data.model_dump()
-        new_book = await self.book_repo.create(db=self.db, obj_data=data, 
+        new_book = await self.book_repo.create(db=self.db, obj_data=book_data, 
                                                author_id=owner.id)
         if new_book is None:
             raise ConflictException("Failed to create book")

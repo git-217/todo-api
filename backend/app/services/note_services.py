@@ -38,8 +38,7 @@ class NoteService:
                           ) -> NoteReadSchema:
         current_book = await self._validate_permissions(owner_id=owner.id, book_id=book_id)
 
-        note = note_data.model_dump()
-        note = await self.note_repo.create(db=self.db, obj_data=note, 
+        note = await self.note_repo.create(db=self.db, obj_data=note_data, 
                                            author_id=owner.id, 
                                            book_id=current_book.id)
 
