@@ -37,7 +37,7 @@ class BookCRUDRepo(CRUDBase[Book, BookCreateSchema, BookUpdateSchema]):
         return result.scalar_one_or_none()
     
     async def autochange_book_stat(self, db:AsyncSession, book_id: int):
-        book = self.get_book_with_notes(db=db, book_id=book_id)
+        book = await self.get_book_with_notes(db=db, book_id=book_id)
 
         total_notes = len(book.notes)
         unfinished_notes = sum(1 for note in book.notes if note.status != CompleteStatus.COMPLETED)

@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from backend.app.tools.enums import CompleteStatus
+from backend.app.tools.enums import UserRoles
 from backend.app.db.repositories.book_repo import book_crud_repo
 from backend.app.db.repositories.note_repo import note_crud_repo
 from backend.app.db.models.users_models import User
@@ -19,17 +19,19 @@ class NoteService:
         self.db = db
     
     async def _validate_permissions(self, 
-                                    owner_id: int,
+                                    owner: User,
                                     book_id: int,
-                                    note_id=int | None) -> Book:
+                                    note_id: int = None) -> list[int]:
         book = await self.book_repo.get_book_with_notes(db=self.db, book_id=book_id)
         if not book:
             raise NotFoundException("Book not found")
-        if book.author_id != owner_id:
-            raise ForbiddenException("Not your book")
+        if (book.author_id != owner.id) and (owner.role not in (UserRoles.ADMIN,
+                                                               UserRoles.SUPER_ADMIN)):
+            raise ForbiddenException("Access denied")
         if note_id and (note_id not in book.notes):
-            raise NotFoundException("Note not found")
-        return book
+            raise NotFoundException("Book is empty")
+        return True
+    #XXX
 
     async def create_note(self, 
                           *, 
@@ -37,9 +39,8 @@ class NoteService:
                           book_id: int, 
                           note_data: NoteCreateSchema
                           ) -> NoteReadSchema:
-        await self._validate_permissions(owner_id=owner.id, 
-                                         book_id=book_id,
-                                         note_id=note_data.id)
+        await self._validate_permissions(owner=owner, 
+                                         book_id=book_id)
 
         note = await self.note_repo.create(db=self.db, obj_data=note_data, 
                                            author_id=owner.id, 
@@ -56,7 +57,7 @@ class NoteService:
                       note_id: int
                       ) -> NoteReadSchema:
         
-        await self._validate_permissions(owner_id=owner.id, 
+        await self._validate_permissions(owner=owner, 
                                          book_id=book_id,
                                          note_id=note_id)
         
@@ -70,9 +71,7 @@ class NoteService:
                       owner: User,
                       book_id: int,
                       ) -> list[NoteReadSchema]:
-        
-        await self._validate_permissions(owner_id=owner.id, book_id=book_id)
-
+        await self._validate_permissions(owner=owner, book_id=book_id)
         notes = await self.note_repo.get_list(db=self.db)
         if notes is None:
             raise NotFoundException('Current book is empty')
@@ -84,7 +83,7 @@ class NoteService:
                      note_id: int,
                      note_data: NoteUpdateSchema
                      ) -> NoteReadSchema:
-        await self._validate_permissions(owner_id=owner.id, book_id=book_id)
+        await self._validate_permissions(owner=owner, book_id=book_id)
 
         updated_note = await self.note_repo.update(
                                                    db=self.db,
@@ -101,7 +100,7 @@ class NoteService:
                      book_id: int,
                      note_id: int
                      ) -> NoteReadSchema:
-        await self._validate_permissions(owner_id=owner.id, book_id=book_id)
+        await self._validate_permissions(owner=owner, book_id=book_id)
 
         deleted_note = await self.note_repo.delete(db=self.db, id=note_id)
         if deleted_note is None:
