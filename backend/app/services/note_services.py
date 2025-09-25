@@ -80,8 +80,7 @@ class NoteService:
                       owner: User,
                       book_id: int,
                       ) -> list[NoteReadSchema]:
-        await self._validate_permissions(owner=owner, book_id=book_id)
-        notes = await self.note_repo.get_list(db=self.db)
+        notes = await self._validate_permissions(owner=owner, book_id=book_id)
         if notes is None:
             raise NotFoundException('Current book is empty')
         return [NoteReadSchema.model_validate(note) for note in notes]
