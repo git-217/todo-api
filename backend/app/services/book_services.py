@@ -25,7 +25,7 @@ class BookService:
         book = await self.book_repo.get_by_id(db=self.db, id=book_id)
         if not book:
             raise NotFoundException("Book not found")
-        if (book.author_id != owner.id) or (owner.role not in (UserRoles.ADMIN,
+        if (book.author_id != owner.id) and (owner.role not in (UserRoles.ADMIN,
                                                                UserRoles.SUPER_ADMIN)):
             raise ForbiddenException("Access denied")
         return book
