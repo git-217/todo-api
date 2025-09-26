@@ -19,41 +19,41 @@ from app.api.dependencies import (get_current_user,
 router = APIRouter(prefix='/users', tags=['User api'])
 
 
-@router.get('/{user_id}/basic') 
+@router.get('/{user_id}/basic', summary='get only user data') 
 async def get_user_by_id(user_id: int,
                          user_service: UserService = Depends(get_user_service)
                          )-> GetResponseBase[UserBasicSchema]:
     user = await user_service.get_user_by_id_basic(user_id=user_id)
     return create_response(data=user)
 
-@router.get('/{user_id}/with_books') 
+@router.get('/{user_id}/with_books', summary='get user data with books ids') 
 async def get_user_by_id(user_id: int,
                          user_service: UserService = Depends(get_user_service)
                          )-> GetResponseBase[UserWithBooksSchema]:
     user = await user_service.get_user_by_id_with_books(user_id=user_id)
     return create_response(data=user)
 
-@router.get('/{user_id}/with_notes') 
+@router.get('/{user_id}/with_notes', summary='get user data with notes ids') 
 async def get_user_by_id(user_id: int,
                          user_service: UserService = Depends(get_user_service)
                          )-> GetResponseBase[UserWithNotesSchema]:
     user = await user_service.get_user_by_id_with_notes(user_id=user_id)
     return create_response(data=user)
 
-@router.get('/{user_id}/full') 
+@router.get('/{user_id}/full', summary='get user data with books and notes ids') 
 async def get_user_by_id(user_id: int,
                          user_service: UserService = Depends(get_user_service)
                          )-> GetResponseBase[UserFullSchema]:
     user = await user_service.get_user_by_id_full(user_id=user_id)
     return create_response(data=user)
 
-@router.get('/all')
+@router.get('/all', summary='get all users base')
 async def get_users(user_service: UserService = Depends(get_user_service)
                     ) -> GetListResponseBase[UserBasicSchema]:
     result = await user_service.get_all_users()
     return create_response(data=result)
 
-@router.get('/me')
+@router.get('/me', summary='get current user with full books and notes')
 async def get_user_current(user = Depends(get_current_user)) -> GetResponseBase[UserFullSchema]:
     return create_response(data=user)
 
