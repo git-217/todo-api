@@ -1,16 +1,16 @@
 from fastapi import APIRouter, Depends
-from backend.app.api.dependencies import get_current_user, get_book_service
-from backend.app.schemas.books_schema import (BookCreateSchema,
+from app.api.dependencies import get_current_user, get_book_service
+from app.schemas.books_schema import (BookCreateSchema,
                                               BookUpdateSchema,
                                               BookReadSchema)
-from backend.app.schemas.response_schema import (create_response,
+from app.schemas.response_schema import (create_response,
                                                  GetResponseBase,
                                                  PostResponseBase,
                                                  GetListResponseBase,
                                                  PatchResponseBase,
                                                  DeleteResponseBase
                                                 )
-from backend.app.services.book_services import BookService
+from app.services.book_services import BookService
 
 
 router = APIRouter(prefix='/books', tags=['Book api'])

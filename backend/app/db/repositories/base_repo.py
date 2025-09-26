@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from sqlalchemy import (select,
                         update as sqlalchemy_update, 
                         delete as sqlalchemy_delete)
-from backend.app.db.base import BaseSAModel
+from app.db.base import BaseSAModel
 
 ModelType = TypeVar('ModelType', bound=BaseSAModel)
 CreateSchemaType = TypeVar('CreateSchemaType', bound=BaseModel)

@@ -1,8 +1,8 @@
 from fastapi import APIRouter
-from backend.app.api.endpoints.books import router as books_router
-from backend.app.api.endpoints.users import router as users_router
-from backend.app.api.endpoints.auth import router as auth_router
-from backend.app.api.endpoints.notes import router as note_router
+from app.api.endpoints.books import router as books_router
+from app.api.endpoints.users import router as users_router
+from app.api.endpoints.auth import router as auth_router
+from app.api.endpoints.notes import router as note_router
 
 api_router = APIRouter()
 

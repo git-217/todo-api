@@ -1,14 +1,11 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from sqlalchemy import select, func
-from sqlalchemy import update as sqlalchemy_update
+from sqlalchemy import select
 
-from backend.app.db.models.books_models import Book
-from backend.app.db.models.users_models import User
-from backend.app.db.models.notes_models import Note
-from backend.app.tools.enums import CompleteStatus
-from backend.app.db.repositories.base_repo import CRUDBase
-from backend.app.schemas.books_schema import BookCreateSchema, BookUpdateSchema
+from app.db.models.books_models import Book
+from app.tools.enums import CompleteStatus
+from app.db.repositories.base_repo import CRUDBase
+from app.schemas.books_schema import BookCreateSchema, BookUpdateSchema
 
 
 

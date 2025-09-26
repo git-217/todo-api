@@ -1,18 +1,18 @@
 from fastapi import Request, HTTPException, status, Depends
 from jose import jwt, JWTError
 from datetime import datetime, timezone
-from backend.app.tools.enums import UserRoles
 from sqlalchemy.ext.asyncio import AsyncSession
-from backend.app.core.config import get_auth_data
-from backend.app.db.session import get_async_session
-from backend.app.db.models.users_models import User
-from backend.app.services.user_services import UserService
-from backend.app.services.book_services import BookService
-from backend.app.services.note_services import NoteService
-from backend.app.schemas.users_schema import UserFullSchema
-from backend.app.db.repositories.user_repo import user_crud_repo
-from backend.app.db.repositories.book_repo import book_crud_repo
-from backend.app.db.repositories.note_repo import note_crud_repo
+from app.tools.enums import UserRoles
+from app.core.config import get_auth_data
+from app.db.session import get_async_session
+from app.db.models.users_models import User
+from app.services.user_services import UserService
+from app.services.book_services import BookService
+from app.services.note_services import NoteService
+from app.schemas.users_schema import UserFullSchema
+from app.db.repositories.user_repo import user_crud_repo
+from app.db.repositories.book_repo import book_crud_repo
+from app.db.repositories.note_repo import note_crud_repo
 
 
 

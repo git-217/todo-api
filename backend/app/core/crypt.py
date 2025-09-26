@@ -4,9 +4,9 @@ from jose import jwt
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.app.core.config import get_auth_data
-from backend.app.db.repositories.user_repo import user_crud_repo
-from backend.app.tools.exceptions import AuthException
+from app.core.config import get_auth_data
+from app.db.repositories.user_repo import user_crud_repo
+from app.tools.exceptions import AuthException
 
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')

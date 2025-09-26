@@ -2,9 +2,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from backend.app.schemas.users_schema import UserCreateSchema, UserUpdateSchema
-from backend.app.db.models.users_models import User
-from backend.app.db.repositories.base_repo import CRUDBase
+from app.schemas.users_schema import UserCreateSchema, UserUpdateSchema
+from app.db.models.users_models import User
+from app.db.repositories.base_repo import CRUDBase
 
 
 

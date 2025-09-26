@@ -1,9 +1,9 @@
 from sqlalchemy import String, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from backend.app.db.base import BaseSAModel
-from backend.app.tools.annotations import str_unique
-from backend.app.tools.enums import UserRoles
+from app.db.base import BaseSAModel
+from app.tools.annotations import str_unique
+from app.tools.enums import UserRoles
 
 
 class User(BaseSAModel):

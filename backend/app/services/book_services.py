@@ -1,15 +1,13 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from backend.app.schemas.books_schema import (BookCreateSchema,
-                                              BookUpdateSchema,
-                                              BookReadSchema)
-from backend.app.db.repositories.book_repo import book_crud_repo
-from backend.app.db.repositories.user_repo import user_crud_repo
-from backend.app.db.models.users_models import User
-from backend.app.db.models.books_models import Book
-from backend.app.tools.exceptions import (NotFoundException, 
-                                         ConflictException, 
-                                         ForbiddenException)
-from backend.app.tools.enums import CompleteStatus, UserRoles
+from app.schemas.books_schema import (BookCreateSchema,
+                                      BookUpdateSchema,
+                                      BookReadSchema)
+from app.db.repositories.book_repo import book_crud_repo
+from app.db.models.users_models import User
+from app.tools.exceptions import (NotFoundException, 
+                                 ConflictException, 
+                                 ForbiddenException)
+from app.tools.enums import UserRoles
 
 
 

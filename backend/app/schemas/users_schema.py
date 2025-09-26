@@ -1,6 +1,6 @@
 import re
 from pydantic import BaseModel, EmailStr, Field, field_validator, ConfigDict
-from backend.app.tools.enums import UserRoles
+from app.tools.enums import UserRoles
 
 class BaseSchema(BaseModel):
     id: int

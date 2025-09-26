@@ -1,18 +1,17 @@
 from fastapi import APIRouter, Depends
-from backend.app.db.models.users_models import User
-from backend.app.api.dependencies import get_current_user, get_note_service
-from backend.app.services.note_services import NoteService
-from backend.app.schemas.response_schema import *
-from backend.app.schemas.notes_schema import (NoteCreateSchema,
-                                              NoteReadSchema,
-                                              NoteUpdateSchema)
-from backend.app.schemas.response_schema import (create_response,
-                                                 GetResponseBase,
-                                                 PostResponseBase,
-                                                 PutResponseBase,
-                                                 GetListResponseBase,
-                                                 DeleteResponseBase
-                                                )
+from app.db.models.users_models import User
+from app.api.dependencies import get_current_user, get_note_service
+from app.services.note_services import NoteService
+from app.schemas.response_schema import *
+from app.schemas.notes_schema import (NoteCreateSchema,
+                                      NoteReadSchema,
+                                      NoteUpdateSchema)
+from app.schemas.response_schema import (create_response,
+                                         GetResponseBase,
+                                         PostResponseBase,
+                                         PutResponseBase,
+                                         GetListResponseBase,
+                                         DeleteResponseBase)
 
 
 

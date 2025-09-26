@@ -1,17 +1,16 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.app.core.crypt import get_password_hash
-from backend.app.db.repositories.user_repo import user_crud_repo
-from backend.app.schemas.users_schema import (UserRegisterSchema, 
-                                              UserUpdateSchema, 
-                                              UserBasicSchema,
-                                              UserWithBooksSchema,
-                                              UserWithNotesSchema,
-                                              UserAuthSchema,
-                                              UserFullSchema)
-from backend.app.db.models.users_models import User
-from backend.app.core.crypt import authenticate_user, create_access_token
-from backend.app.tools.exceptions import (NotFoundException)
+from app.core.crypt import get_password_hash
+from app.db.repositories.user_repo import user_crud_repo
+from app.schemas.users_schema import (UserRegisterSchema, 
+                                      UserUpdateSchema, 
+                                      UserBasicSchema,
+                                      UserWithBooksSchema,
+                                      UserWithNotesSchema,
+                                      UserAuthSchema,
+                                      UserFullSchema)
+from app.core.crypt import authenticate_user, create_access_token
+from app.tools.exceptions import (NotFoundException)
 
 
 class UserService:

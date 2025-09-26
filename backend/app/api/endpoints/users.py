@@ -1,21 +1,19 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.app.services.user_services import UserService
-from backend.app.db.session import get_async_session
-from backend.app.schemas.users_schema import (PatchUserNamesSchema,
-                                              UserBasicSchema,
-                                              UserWithBooksSchema,
-                                              UserWithNotesSchema,
-                                              UserFullSchema)
-from backend.app.schemas.response_schema import (create_response,
-                                                 GetResponseBase,
-                                                 GetListResponseBase,
-                                                 PatchResponseBase,
-                                                 DeleteResponseBase)
-from backend.app.api.dependencies import (get_current_user, 
-                                          get_current_admin_user,
-                                          get_user_service)
+from app.services.user_services import UserService
+from app.schemas.users_schema import (PatchUserNamesSchema,
+                                      UserBasicSchema,
+                                      UserWithBooksSchema,
+                                      UserWithNotesSchema,
+                                      UserFullSchema)
+from app.schemas.response_schema import (create_response,
+                                         GetResponseBase,
+                                         GetListResponseBase,
+                                         PatchResponseBase,
+                                         DeleteResponseBase)
+from app.api.dependencies import (get_current_user, 
+                                  get_current_admin_user,
+                                  get_user_service)
 
 
 router = APIRouter(prefix='/users', tags=['User api'])

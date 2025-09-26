@@ -1,14 +1,14 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from backend.app.tools.enums import UserRoles
-from backend.app.db.repositories.book_repo import book_crud_repo
-from backend.app.db.repositories.note_repo import note_crud_repo
-from backend.app.db.models.users_models import User
-from backend.app.db.models.notes_models import Note
-from backend.app.schemas.notes_schema import (NoteCreateSchema, 
-                                              NoteUpdateSchema,
-                                              NoteReadSchema)
-from backend.app.tools.exceptions import (NotFoundException,
-                                         ForbiddenException)
+from app.tools.enums import UserRoles
+from app.db.repositories.book_repo import book_crud_repo
+from app.db.repositories.note_repo import note_crud_repo
+from app.db.models.users_models import User
+from app.db.models.notes_models import Note
+from app.schemas.notes_schema import (NoteCreateSchema, 
+                                      NoteUpdateSchema,
+                                      NoteReadSchema)
+from app.tools.exceptions import (NotFoundException,
+                                 ForbiddenException)
 
 class NoteService:
     def __init__(self, db: AsyncSession,
