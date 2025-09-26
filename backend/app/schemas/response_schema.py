@@ -29,6 +29,9 @@ class PatchResponseBase(ResponseBase[DataType], Generic[DataType]):
 class DeleteResponseBase(ResponseBase[DataType], Generic[DataType]):
     message: str | None = "Data deleted correctly"
 
+class TokenResponseBase(ResponseBase[DataType], Generic[DataType]):
+    message: str | None = "Token set correctly"
+
 def create_response(data: DataType,
                     message: str | None = None,
                     meta: dict | Any | None = {}
@@ -38,6 +41,7 @@ def create_response(data: DataType,
                         | PutResponseBase[DataType]
                         | DeleteResponseBase[DataType]
                         | GetListResponseBase[DataType]
+                        | TokenResponseBase[DataType]
                     ):
     if message is None:
         return {'data': data, 'meta': meta}

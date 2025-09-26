@@ -1,43 +1,35 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.app.schemas.users_schema import UserRegisterSchema, UserAuthSchema
+from backend.app.schemas.users_schema import (UserRegisterSchema, 
+                                              UserAuthSchema, 
+                                              UserBasicSchema)
+from backend.app.api.dependencies import get_user_service
 from backend.app.services.user_services import UserService
 from backend.app.db.session import get_async_session
+from backend.app.schemas.response_schema import create_response, PostResponseBase
 
 
 router = APIRouter(prefix='/auth', tags=['Auth'])
 
 @router.post('/register')
 async def register(new_user: UserRegisterSchema,
-                            db: AsyncSession = Depends(get_async_session)):
+                   user_service: UserService = Depends(get_user_service)
+                   ) -> PostResponseBase[UserBasicSchema]:
     
-    result = await UserService(db).registrate_user(user_data=new_user)
-    if result:
-        print(result)
-        return {'msg': 'Registration success'}
-    else:
-        raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail='User already exists'
-            )
+    result = await user_service.registrate_user(user_data=new_user)
+    return create_response(data=result, message='Registration success')
 
 
 @router.post('/login')
 async def login(response: Response, 
                 auth_data: UserAuthSchema,
-                db: AsyncSession = Depends(get_async_session)
+                user_service: UserService = Depends(get_user_service)
                 ):
-    access_token = await UserService(db).create_access_token(user_data=auth_data)
-    if access_token:
-        response.set_cookie(key='user_access_token', value=access_token, httponly=True)
-        #refresh token realization will be somwhere in the future ig
-        return {'access_token': access_token, 'refresh_token': None }
-    else:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Wrong Email or password'
-        )
+    access_token = await user_service.create_access_token(user_data=auth_data)
+    response.set_cookie(key='user_access_token', value=access_token, httponly=True)
+    #refresh token realization will be somwhere in the future ig
+    return {'access_token': access_token, 'refresh_token': None }
     
 @router.post('/logout')
 async def logout(response: Response):

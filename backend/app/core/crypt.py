@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.core.config import get_auth_data
 from backend.app.db.repositories.user_repo import user_crud_repo
+from backend.app.tools.exceptions import AuthException
 
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
@@ -31,7 +32,7 @@ async def authenticate_user(db: AsyncSession, email: str, password: str):
     try:
         pass_status = verify_password(plain_password=password, hashed_password=user.password_hash)
         if not user or pass_status is False:
-            return None
+            raise AuthException()
         return user
     except UnknownHashError:
-        return None
+        raise AuthException()

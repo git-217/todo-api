@@ -15,8 +15,10 @@ from backend.app.tools.exceptions import (NotFoundException)
 
 
 class UserService:
-    def __init__(self, db: AsyncSession):
-        self.user_repo = user_crud_repo
+    def __init__(self, 
+                 db: AsyncSession,
+                 user_repo = user_crud_repo):
+        self.user_repo = user_repo
         self.db = db
 
     async def create_user(self, user_data: UserRegisterSchema) -> UserBasicSchema:
@@ -119,10 +121,10 @@ class UserService:
         return UserBasicSchema.model_validate(new_user) 
 
 
-    async def create_access_token(self, user_data: UserAuthSchema) -> str:
+    async def create_access_token(self, user_data: UserAuthSchema) -> dict:
         user = await authenticate_user(db=self.db, email=user_data.email, password=user_data.password)
         if user is None:
-            return NotFoundException('')
+            raise NotFoundException("User with that email doesn't exist")
         access_token = create_access_token({'sub': str(user.id)})
         return access_token
         

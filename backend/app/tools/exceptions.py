@@ -11,3 +11,7 @@ class ForbiddenException(HTTPException):
 class ConflictException(HTTPException):
     def __init__(self, detail: str = "Conflict occurred"):
         super().__init__(status_code=status.HTTP_409_CONFLICT, detail=detail)
+
+class AuthException(HTTPException):
+    def __init__(self, detail: str = "Authorization error"):
+        super().__init__(status_code=status.HTTP_401_UNAUTHORIZED, detail=detail)
