@@ -15,7 +15,7 @@ from app.schemas.response_schema import (create_response,
 
 
 
-router = APIRouter(prefix='/notes')
+router = APIRouter(prefix='/notes', tags=['Note api'])
 
 
 @router.post('/{book_id}/note/new')
