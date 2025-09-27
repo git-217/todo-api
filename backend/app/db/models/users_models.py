@@ -12,20 +12,18 @@ class User(BaseSAModel):
     email: Mapped[str_unique]
     password_hash: Mapped[str]
 
-    role: Mapped[UserRoles] = mapped_column(default=UserRoles.BASE, server_default=text('"basic_role"'))
+    role: Mapped[UserRoles] = mapped_column(
+        default=UserRoles.BASE, server_default=text('"basic_role"')
+    )
 
-    books: Mapped[list['Book']] = relationship(
-        "Book",
-        back_populates='user',
-        cascade='all, delete-orphan'
-        )
+    books: Mapped[list["Book"]] = relationship(
+        "Book", back_populates="user", cascade="all, delete-orphan"
+    )
 
-    notes: Mapped[list['Note']] = relationship(
-        "Note",
-        back_populates='user',
-        cascade='all, delete-orphan'
-        )
-    
+    notes: Mapped[list["Note"]] = relationship(
+        "Note", back_populates="user", cascade="all, delete-orphan"
+    )
+
     def __str__(self):
         return f"{self.__class__.__name__}(id={self.id}, user_email={self.email!r})"
 

@@ -4,24 +4,21 @@ from app.db.repositories.book_repo import book_crud_repo
 from app.db.repositories.note_repo import note_crud_repo
 from app.db.models.users_models import User
 from app.db.models.notes_models import Note
-from app.schemas.notes_schema import (NoteCreateSchema, 
-                                      NoteUpdateSchema,
-                                      NoteReadSchema)
-from app.tools.exceptions import (NotFoundException,
-                                 ForbiddenException)
+from app.schemas.notes_schema import NoteCreateSchema, NoteUpdateSchema, NoteReadSchema
+from app.tools.exceptions import NotFoundException, ForbiddenException
+
 
 class NoteService:
-    def __init__(self, db: AsyncSession,
-                 note_repo = note_crud_repo,
-                 book_repo = book_crud_repo):
+    def __init__(
+        self, db: AsyncSession, note_repo=note_crud_repo, book_repo=book_crud_repo
+    ):
         self.note_repo = note_repo
         self.book_repo = book_repo
         self.db = db
-    
-    async def _validate_permissions(self, 
-                                    owner: User,
-                                    book_id: int,
-                                    note_id: int = None) -> list[Note]:
+
+    async def _validate_permissions(
+        self, owner: User, book_id: int, note_id: int = None
+    ) -> list[Note]:
         """
         Validates user's allowings to current book.
 
@@ -33,10 +30,11 @@ class NoteService:
         book = await self.book_repo.get_book_with_notes(db=self.db, book_id=book_id)
         if not book:
             raise NotFoundException("Book not found")
-        if (book.author_id != owner.id) and (owner.role not in (UserRoles.ADMIN,
-                                                               UserRoles.SUPER_ADMIN)):
+        if (book.author_id != owner.id) and (
+            owner.role not in (UserRoles.ADMIN, UserRoles.SUPER_ADMIN)
+        ):
             raise ForbiddenException("Access denied")
-        
+
         notes = [n for n in book.notes]
         if note_id:
             note_ids = [n.id for n in book.notes]
@@ -44,76 +42,63 @@ class NoteService:
                 raise NotFoundException("Book is empty")
         return notes
 
-    async def create_note(self, 
-                          *, 
-                          owner: User, 
-                          book_id: int, 
-                          note_data: NoteCreateSchema
-                          ) -> NoteReadSchema:
-        await self._validate_permissions(owner=owner, 
-                                         book_id=book_id)
+    async def create_note(
+        self, *, owner: User, book_id: int, note_data: NoteCreateSchema
+    ) -> NoteReadSchema:
+        await self._validate_permissions(owner=owner, book_id=book_id)
 
-        note = await self.note_repo.create(db=self.db, obj_data=note_data, 
-                                           author_id=owner.id, 
-                                           book_id=book_id)
+        note = await self.note_repo.create(
+            db=self.db, obj_data=note_data, author_id=owner.id, book_id=book_id
+        )
 
         await self.book_repo.autochange_book_stat(db=self.db, book_id=book_id)
 
         return NoteReadSchema.model_validate(note)
-    
-    async def get_one(self,
-                      *,
-                      owner: User,
-                      book_id: int,
-                      note_id: int
-                      ) -> NoteReadSchema:
-        
-        notes = await self._validate_permissions(owner=owner, 
-                                                        book_id=book_id,
-                                                        note_id=note_id)
+
+    async def get_one(
+        self, *, owner: User, book_id: int, note_id: int
+    ) -> NoteReadSchema:
+
+        notes = await self._validate_permissions(
+            owner=owner, book_id=book_id, note_id=note_id
+        )
         if notes is None:
             raise NotFoundException("Note doesn't exist")
         return NoteReadSchema.model_validate(*notes)
-    
-    async def get_all(self,
-                      *,
-                      owner: User,
-                      book_id: int,
-                      ) -> list[NoteReadSchema]:
+
+    async def get_all(
+        self,
+        *,
+        owner: User,
+        book_id: int,
+    ) -> list[NoteReadSchema]:
         notes = await self._validate_permissions(owner=owner, book_id=book_id)
         if notes is None:
-            raise NotFoundException('Current book is empty')
+            raise NotFoundException("Current book is empty")
         return [NoteReadSchema.model_validate(note) for note in notes]
 
-    async def update(self, *,
-                     owner: User,
-                     book_id: int,
-                     note_id: int,
-                     note_data: NoteUpdateSchema
-                     ) -> NoteReadSchema:
+    async def update(
+        self, *, owner: User, book_id: int, note_id: int, note_data: NoteUpdateSchema
+    ) -> NoteReadSchema:
         await self._validate_permissions(owner=owner, book_id=book_id)
 
         updated_note = await self.note_repo.update(
-                                                   db=self.db,
-                                                   id=note_id,
-                                                   new_data_obj=note_data
-                                                  )
+            db=self.db, id=note_id, new_data_obj=note_data
+        )
         if not updated_note:
-            raise NotFoundException('Note not found')
-        
+            raise NotFoundException("Note not found")
+
         return NoteReadSchema.model_validate(updated_note)
-    
-    async def delete(self, *,
-                     owner: User,
-                     book_id: int,
-                     note_id: int
-                     ) -> NoteReadSchema:
+
+    async def delete(
+        self, *, owner: User, book_id: int, note_id: int
+    ) -> NoteReadSchema:
         await self._validate_permissions(owner=owner, book_id=book_id)
 
         deleted_note = await self.note_repo.delete(db=self.db, id=note_id)
         if deleted_note is None:
             raise NotFoundException("Note not found")
-        
+
         await self.book_repo.autochange_book_stat(db=self.db, book_id=book_id)
-        
+
         return NoteReadSchema.model_validate(deleted_note)

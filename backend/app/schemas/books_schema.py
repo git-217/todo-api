@@ -1,24 +1,25 @@
 from pydantic import BaseModel, Field
 from app.tools.enums import CompleteStatus
 
-class BookCreateSchema(BaseModel):
-    title: str = Field(..., 
-                       max_length=64, 
-                       description='Title of the book, max 64 chars')
-    description: str | None = Field(None, 
-                                    max_length=256, 
-                                    description='Description of the book. Max 256 chars')
 
+class BookCreateSchema(BaseModel):
+    title: str = Field(
+        ..., max_length=64, description="Title of the book, max 64 chars"
+    )
+    description: str | None = Field(
+        None, max_length=256, description="Description of the book. Max 256 chars"
+    )
 
 
 class BookUpdateSchema(BaseModel):
     id: int
-    title: str | None = Field(None, 
-                              max_length=64, 
-                              description='Title of the book, max 64 chars')
-    description: str | None = Field(None, 
-                                    max_length=256, 
-                                    description='Description of the book. Max 256 chars')
+    title: str | None = Field(
+        None, max_length=64, description="Title of the book, max 64 chars"
+    )
+    description: str | None = Field(
+        None, max_length=256, description="Description of the book. Max 256 chars"
+    )
+
 
 class BookReadSchema(BaseModel):
     id: int
@@ -27,4 +28,4 @@ class BookReadSchema(BaseModel):
     status: CompleteStatus
     author_id: int
 
-    model_config = {'from_attributes': True}
+    model_config = {"from_attributes": True}

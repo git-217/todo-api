@@ -1,15 +1,17 @@
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from app.tools.enums import CompleteStatus
 
+
 class NoteCreateSchema(BaseModel):
-    title: str = Field(..., max_length=128, detail='name of the task, max length = 128')
-    content: str = Field(..., max_length=1024, 
-                         detail='task content. max length = 1024')
+    title: str = Field(..., max_length=128, detail="name of the task, max length = 128")
+    content: str = Field(..., max_length=1024, detail="task content. max length = 1024")
+
 
 class NoteUpdateSchema(BaseModel):
     title: str
     content: str
     status: CompleteStatus
+
 
 class NoteReadSchema(BaseModel):
     id: int
@@ -19,5 +21,4 @@ class NoteReadSchema(BaseModel):
     author_id: int
     book_id: int
 
-
-    model_config = {'from_attributes': True}
+    model_config = {"from_attributes": True}
