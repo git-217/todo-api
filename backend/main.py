@@ -7,7 +7,7 @@ app = FastAPI()
 
 
 @app.get("/", description="main path")
-def main_page():
+def main_page() -> dict:
     return {"msg": "hello api!"}
 
 

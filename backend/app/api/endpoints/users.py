@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from app.services.user_services import UserService
+from app.db.models.users_models import User
 from app.schemas.users_schema import (
     PatchUserNamesSchema,
     UserBasicSchema,
@@ -34,7 +35,7 @@ async def get_user_by_id(
 
 
 @router.get("/{user_id}/with_books", summary="get user data with books ids")
-async def get_user_by_id(
+async def get_user_by_id_with_books(
     user_id: int, user_service: UserService = Depends(get_user_service)
 ) -> GetResponseBase[UserWithBooksSchema]:
     user = await user_service.get_user_by_id_with_books(user_id=user_id)
@@ -42,7 +43,7 @@ async def get_user_by_id(
 
 
 @router.get("/{user_id}/with_notes", summary="get user data with notes ids")
-async def get_user_by_id(
+async def get_user_by_id_with_notes(
     user_id: int, user_service: UserService = Depends(get_user_service)
 ) -> GetResponseBase[UserWithNotesSchema]:
     user = await user_service.get_user_by_id_with_notes(user_id=user_id)
@@ -50,7 +51,7 @@ async def get_user_by_id(
 
 
 @router.get("/{user_id}/full", summary="get user data with books and notes ids")
-async def get_user_by_id(
+async def get_user_by_id_full(
     user_id: int, user_service: UserService = Depends(get_user_service)
 ) -> GetResponseBase[UserFullSchema]:
     user = await user_service.get_user_by_id_full(user_id=user_id)
@@ -67,7 +68,7 @@ async def get_users(
 
 @router.get("/me", summary="get current user with full books and notes")
 async def get_user_current(
-    user=Depends(get_current_user),
+    user: User = Depends(get_current_user),
 ) -> GetResponseBase[UserFullSchema]:
     return create_response(data=user)
 
@@ -75,7 +76,7 @@ async def get_user_current(
 @router.patch("/me", summary="change user's First/Last name")
 async def change_user_names(
     new_data: PatchUserNamesSchema,
-    user=Depends(get_current_user),
+    user: User = Depends(get_current_user),
     user_service: UserService = Depends(get_user_service),
 ) -> PatchResponseBase[UserBasicSchema]:
     patched = await user_service.update(uid=user.id, user_data=new_data)
@@ -84,7 +85,7 @@ async def change_user_names(
 
 @router.delete("/{user_id}/delete")
 async def delete_user_by_id(
-    user=Depends(get_current_admin_user),
+    user: User = Depends(get_current_admin_user),
     user_service: UserService = Depends(get_user_service),
 ) -> DeleteResponseBase[UserFullSchema]:
 

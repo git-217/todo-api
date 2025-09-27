@@ -33,7 +33,7 @@ async def get_note_service(
     return NoteService(db=db, note_repo=note_crud_repo, book_repo=book_crud_repo)
 
 
-def get_token(request: Request):
+def get_token(request: Request) -> str:
     token = request.cookies.get("user_access_token")
 
     if not token:
@@ -73,7 +73,7 @@ async def get_current_user(
     return await user_service.get_user_by_id_full(int(user_id))
 
 
-async def get_current_admin_user(current_user: User = Depends(get_current_user)):
+async def get_current_admin_user(current_user: User = Depends(get_current_user)) -> User:
     if current_user.role is UserRoles.ADMIN:
         return current_user
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")

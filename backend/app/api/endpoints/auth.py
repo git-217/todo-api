@@ -5,7 +5,7 @@ from app.schemas.users_schema import UserRegisterSchema, UserAuthSchema, UserBas
 from app.api.dependencies import get_user_service
 from app.services.user_services import UserService
 from app.db.session import get_async_session
-from app.schemas.response_schema import create_response, PostResponseBase
+from app.schemas.response_schema import create_response, PostResponseBase, TokenResponseBase
 
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -25,14 +25,14 @@ async def login(
     response: Response,
     auth_data: UserAuthSchema,
     user_service: UserService = Depends(get_user_service),
-):
+) -> TokenResponseBase[dict]:
     access_token = await user_service.create_access_token(user_data=auth_data)
     response.set_cookie(key="user_access_token", value=access_token, httponly=True)
     # refresh token realization will be somwhere in the future ig
-    return {"access_token": access_token, "refresh_token": None}
-
+    tokens = {"access_token": access_token, "refresh_token": None}
+    return create_response(data=tokens)
 
 @router.post("/logout")
-async def logout(response: Response):
+async def logout(response: Response) -> dict:
     response.delete_cookie(key="user_access_token")
     return {"msg": "logout"}

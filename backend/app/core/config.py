@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env")
 
 
-settings = Settings()  # type: ignore
+settings = Settings()
 
 
 def get_asyncpg_db_url():
@@ -24,5 +24,5 @@ def get_asyncpg_db_url():
     )
 
 
-def get_auth_data():
+def get_auth_data() -> dict:
     return {"secret_key": settings.SECRET_KEY, "algorithm": settings.ALGORITHM}

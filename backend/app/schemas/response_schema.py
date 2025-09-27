@@ -6,38 +6,37 @@ T = TypeVar("T")
 
 
 class ResponseBase(BaseModel, Generic[T]):
-    message: str = ""
+    message: str | None = ""
     meta: dict | Any | None = {}
     data: T | None = None
 
 
-class GetListResponseBase(ResponseBase[DataType], Generic[DataType]):
-    message: str | None = "Data got correctly"
-    data: list[DataType]
+class GetListResponseBase(ResponseBase[list[DataType]], Generic[DataType]):
+    message: str = "Data got correctly"
 
 
 class GetResponseBase(ResponseBase[DataType], Generic[DataType]):
-    message: str | None = "Data got correctly"
+    message: str = "Data got correctly"
 
 
 class PostResponseBase(ResponseBase[DataType], Generic[DataType]):
-    message: str | None = "Data created correctly"
+    message: str = "Data created correctly"
 
 
 class PutResponseBase(ResponseBase[DataType], Generic[DataType]):
-    message: str | None = "Data updated correctly"
+    message: str = "Data updated correctly"
 
 
 class PatchResponseBase(ResponseBase[DataType], Generic[DataType]):
-    message: str | None = "Data patched correctly"
+    message: str = "Data patched correctly"
 
 
 class DeleteResponseBase(ResponseBase[DataType], Generic[DataType]):
-    message: str | None = "Data deleted correctly"
+    message: str = "Data deleted correctly"
 
 
 class TokenResponseBase(ResponseBase[DataType], Generic[DataType]):
-    message: str | None = "Token set correctly"
+    message: str = "Token set correctly"
 
 
 def create_response(
