@@ -1,7 +1,22 @@
 services:
+
+  fastapi_server:
+    build: .
+    container_name: fastapi_app
+    restart: always
+    ports:
+      - "8000:8080"
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend:/code
+    expose: 
+      - 8080
+    env_file: ".env"
+
   postgres:
     image: postgres:latest
-    container_name: TODOit_psql
+    container_name: TODO_psql
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: superuser
@@ -35,6 +50,16 @@ services:
     restart: unless-stopped
     tty: true
     stdin_open: true
+
+  migrate:
+    build: ./
+    command: >
+      sh -c "sleep 10 && alembic upgrade head"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file: ".env"
+    restart: on-failure
 
 volumes:
   pgdata:
